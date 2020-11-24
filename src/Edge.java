@@ -1,22 +1,32 @@
 public class Edge implements edge_data {
+
+    private int src,dest,tag;
+    private double weight;
+    private String info;
+
+    public Edge (int src, int dest, double weight){
+        this.src=src;
+        this.dest=dest;
+        this.weight=weight;
+        info=null;
+        tag=0;
+    }
     /**
      * The id of the source node of this edge.
-     *
      * @return
      */
     @Override
     public int getSrc() {
-        return 0;
+        return this.src;
     }
 
     /**
      * The id of the destination node of this edge
-     *
      * @return
      */
     @Override
     public int getDest() {
-        return 0;
+        return this.dest;
     }
 
     /**
@@ -24,48 +34,49 @@ public class Edge implements edge_data {
      */
     @Override
     public double getWeight() {
-        return 0;
+        return this.weight;
     }
 
     /**
      * Returns the remark (meta data) associated with this edge.
-     *
      * @return
      */
     @Override
     public String getInfo() {
-        return null;
+        return this.info;
     }
 
     /**
      * Allows changing the remark (meta data) associated with this edge.
-     *
      * @param s
      */
     @Override
     public void setInfo(String s) {
-
+        this.info=s;
     }
 
     /**
      * Temporal data (aka color: e,g, white, gray, black)
      * which can be used be algorithms
-     *
      * @return
      */
     @Override
     public int getTag() {
-        return 0;
+        return this.tag;
     }
 
     /**
      * This method allows setting the "tag" value for temporal marking an edge - common
      * practice for marking by algorithms.
-     *
      * @param t - the new value of the tag
      */
     @Override
     public void setTag(int t) {
+        this.tag=t;
+    }
 
+    @Override
+    public String toString() {
+        return "Edge{" +"src= " + src + ", dest=" + dest + '\'' + '}';
     }
 }
