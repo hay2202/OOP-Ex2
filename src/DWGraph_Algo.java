@@ -1,34 +1,56 @@
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 public class DWGraph_Algo implements dw_graph_algorithms{
+    private directed_weighted_graph graph;
+
+    public DWGraph_Algo(){
+        graph=new DWGraph_DS();
+    }
     /**
      * Init the graph on which this set of algorithms operates on.
-     *
      * @param g
      */
     @Override
     public void init(directed_weighted_graph g) {
-
+       graph=g;
     }
 
     /**
      * Return the underlying graph of which this class works.
-     *
      * @return
      */
     @Override
     public directed_weighted_graph getGraph() {
-        return null;
+        return graph;
     }
 
     /**
      * Compute a deep copy of this weighted graph.
-     *
      * @return
      */
     @Override
     public directed_weighted_graph copy() {
-        return null;
+        Collection<node_data> nodeSet = graph.getV();   //all nodes in the graph
+        HashMap<Integer, Collection<edge_data>> neighbor = new HashMap<>();
+        directed_weighted_graph copyGraph = new DWGraph_DS();
+
+        for (node_data n : nodeSet) {             //copying a set of all the neighbors
+            neighbor.put(n.getKey(), graph.getE(n.getKey()));
+        }
+        for (node_data n : nodeSet) {           //copying the nodes to the new graph
+            node_data temp = new Node(n);
+            copyGraph.addNode(temp);
+        }
+        for (node_data n : nodeSet) {              //copying the edges
+            if (neighbor.get(n.getKey()) != null) {
+                for (edge_data e : neighbor.get(n.getKey())) {
+                    copyGraph.connect(e.getSrc(),e.getDest(),e.getWeight());
+                }
+            }
+        }
+        return copyGraph;
     }
 
     /**

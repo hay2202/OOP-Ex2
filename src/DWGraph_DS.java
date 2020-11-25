@@ -1,10 +1,11 @@
 import java.util.Collection;
 import java.util.HashMap;
 
+
 public class DWGraph_DS implements directed_weighted_graph{
 
     private int mc, numOfEdges,numOfNodes;
-    private HashMap<Integer,node_data> mapNodes;          //hashmap of all thr nodes.
+    private HashMap<Integer,node_data> mapNodes;          //hashmap of all the nodes.
     private HashMap<Integer,HashMap<Integer,edge_data>> mapEdges;   //every node has hashmap of his neighbours.
 
     public DWGraph_DS (){
@@ -78,7 +79,6 @@ public class DWGraph_DS implements directed_weighted_graph{
                 mc++;
             }
         }
-
     }
 
     /**
@@ -119,15 +119,19 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Deletes the edge from the graph,
-     * Note: this method should run in O(1) time.
-     *
      * @param src
      * @param dest
      * @return the data of the removed edge (null if none).
      */
     @Override
     public edge_data removeEdge(int src, int dest) {
-        return null;
+        if (getEdge(src, dest)==null)
+            return null;
+        edge_data edge= mapEdges.get(src).get(dest);
+        mapEdges.get(src).remove(dest);
+        numOfEdges--;
+        mc++;
+        return edge;
     }
 
     /**
