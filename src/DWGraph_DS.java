@@ -1,5 +1,6 @@
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class DWGraph_DS implements directed_weighted_graph{
@@ -7,12 +8,12 @@ public class DWGraph_DS implements directed_weighted_graph{
     private int mc, numOfEdges,numOfNodes;
     private HashMap<Integer,node_data> mapNodes;          //hashmap of all the nodes.
     private HashMap<Integer,HashMap<Integer,edge_data>> mapEdges;   //every node has hashmap of his neighbours.
-
+    private HashMap<Integer , List<Integer>> destToSrc ;
     public DWGraph_DS (){
         mc=numOfEdges=numOfNodes=0;
         mapNodes = new HashMap<>();
         mapEdges = new HashMap<>();
-        System.out.println("");
+        destToSrc =new HashMap<>();
     }
 
     /**
@@ -70,6 +71,7 @@ public class DWGraph_DS implements directed_weighted_graph{
             if (src != dest && getEdge(src,dest)==null) {
                 edge_data edge = new Edge(src,dest,w);
                 mapEdges.get(src).put(dest,edge);
+                destToSrc.get(src).add(dest);
                 numOfEdges++;
                 mc++;
             }
@@ -115,6 +117,29 @@ public class DWGraph_DS implements directed_weighted_graph{
      */
     @Override
     public node_data removeNode(int key) {
+        int dest=0;
+        if (mapNodes.containsKey(key) && mapEdges.containsKey(key)){ //check if the key is contains
+            node_data save=mapNodes.get(key);
+            HashMap<Integer , edge_data> nei=mapEdges.get(key); // make map for move on edge
+            for (Integer i:nei.keySet()) {
+                removeEdge(key , i); // remove edge from vertex(src) to other node(dest)
+            }
+            if(destToSrc.containsKey(key)) // remove all the edge from the other node to vertex
+            {
+                while(!destToSrc.get(key).isEmpty())
+                {
+                    dest=destToSrc.get(key).remove(0);
+                    removeEdge(dest , key ); // remove all the edge from other node to vertex
+                }
+
+            }
+
+            mapEdges.get(key).clear(); // clear all the element for vertex
+            mapEdges.remove(key);
+            mapNodes.remove(key);
+            mc--;
+            return save;
+        }
         return null;
     }
 
