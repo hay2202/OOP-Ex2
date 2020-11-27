@@ -12,6 +12,7 @@ public class DWGraph_DS implements directed_weighted_graph{
         mc=numOfEdges=numOfNodes=0;
         mapNodes = new HashMap<>();
         mapEdges = new HashMap<>();
+        System.out.println("");
     }
 
     /**
