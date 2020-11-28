@@ -4,7 +4,7 @@ public class Node implements node_data {
     private double weight;
     private String info;
     private geo_location location;
-    private static int counter;
+    private static int counter=1;
 
     public Node(){
         this.key=counter++;
@@ -108,12 +108,6 @@ public class Node implements node_data {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "key=" + key +
-                ", tag=" + tag +
-                ", weight=" + weight +
-                ", info='" + info + '\'' +
-                ", location=" + location +
-                '}';
+        return "Node # "+key;
     }
 }

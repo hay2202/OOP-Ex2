@@ -1,22 +1,18 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
     private directed_weighted_graph graph;
-    HashMap<Integer, Double> dist; //  Length from src -> dest
-    HashMap<Integer, Integer> paht; // path from src -> dest .
+    private HashMap<Integer, Double> dist; //  Length from src -> dest
+    private HashMap<Integer, Integer> path; // path from src -> dest .
 
     public DWGraph_Algo() {
         graph = new DWGraph_DS();
         dist = new HashMap<Integer, Double>();
-        paht = new HashMap<Integer, Integer>();
+        path = new HashMap<Integer, Integer>();
     }
 
     /**
      * Init the graph on which this set of algorithms operates on.
-     *
      * @param g
      */
     @Override
@@ -26,7 +22,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     /**
      * Return the underlying graph of which this class works.
-     *
      * @return
      */
     @Override
@@ -36,7 +31,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     /**
      * Compute a deep copy of this weighted graph.
-     *
      * @return
      */
     @Override
@@ -75,7 +69,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * all the vertices and edges of the graph.
      * <p>
      * "p"- This is a marking we have passed.
-     *
      * @param key-vertex start.
      */
     public void dfs(int key) { //to is connect
@@ -99,8 +92,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         for (node_data i : graph.getV()) {
             i.setInfo(null);
         }
-        if (graph != null)
-            dfs(0);
+        if (graph != null){
+            Iterator<node_data> itr= graph.getV().iterator();   //random node in the graph
+            dfs(itr.next().getKey());
+            }
 
         for (node_data i : graph.getV()) {
             if (i.getInfo() == null)
@@ -109,59 +104,58 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
-    /**
-     * dist - contains the map of the vertices and each value contains the route from the source to the vertex.
-     * paht- contains the route map which each vertex contains its father.
-     * This algorithm we get a vertex and start going over all the other vertices in the graph.
-     * In the first loop you go through all the existing vertices in the graph.
-     * Take a vertex from the graph and ask if we have already gone over it, if so, move on to the next vertex,
-     * If not go ahead and get the edge list he has which leads to his neighbors.
-     * Calculate the length of the neighboring vertex trajectory with the weight of the edge and the vertex from which it comes.
-     * If the length of a route already exists, check whether the vertex that contains the length is larger than the route we calculated, if so, we will replace the length on the map.
-     * Keeping track is put in that each vertex contains its father (where it came from) and thus the track is saved.
-     * The complexity of time is O (E + V) because we go through all the vertices in the graph and also go over the whole edge of the graph.
-     *
-     * @param src
-     * @param dest
-     */
-    public void _short_Path(int src, int dest) {
-        dist.put(src, 0.0); // Enter the distance of the first vertex
-       // graph.getNode(src).setTag(0);
-
-        //Go over all the vertices in the graph.
-        for (node_data vertex : graph.getV()) {
-
-           //Checks if we have worked on the vertex if not you will enter and perform the actions.
-            if (dist.get(vertex.getKey()) != null) {
-
-                for (edge_data e : graph.getE(vertex.getKey())) { // Beyond all the neighbors.
-
-                   //Calculating the weight from the source vertex to the neighboring vertex
-                    // includes the distance we traveled to the source.
-                    double newDist = dist.get(vertex.getKey()) + e.getWeight();
-
-                    //If the neighbor first came to him, update the distance and add it to the route list
-                    if (dist.get(e.getDest()) == null) {
-                        dist.put(e.getDest(), newDist);
-                        paht.put(e.getDest(), vertex.getKey());
-                    }
-
-                    else {// If we have already passed, check whether the new distance is small
-                        // and the existing one, then replace the values.
-                        dist.put(e.getDest(), (Math.min(dist.get(e.getDest()), newDist)));
-                        double s = Math.min(dist.get(e.getDest()), newDist);
-                        if (s == newDist)
-                            paht.put(e.getDest(), e.getSrc());
-                    }
-                }
-            }
-        }
-        for (int i : dist.keySet()) { //Enter the distance of each vertex
-            double x = dist.get(i);
-            graph.getNode(i).setTag((int) x); // i dont know if need cast ???????
-        }
-
-    }
+//    /**
+//     * dist - contains the map of the vertices and each value contains the route from the source to the vertex.
+//     * path- contains the route map which each vertex contains its father.
+//     * This algorithm we get a vertex and start going over all the other vertices in the graph.
+//     * In the first loop you go through all the existing vertices in the graph.
+//     * Take a vertex from the graph and ask if we have already gone over it, if so, move on to the next vertex,
+//     * If not go ahead and get the edge list he has which leads to his neighbors.
+//     * Calculate the length of the neighboring vertex trajectory with the weight of the edge and the vertex from which it comes.
+//     * If the length of a route already exists, check whether the vertex that contains the length is larger than the route we calculated, if so, we will replace the length on the map.
+//     * Keeping track is put in that each vertex contains its father (where it came from) and thus the track is saved.
+//     * The complexity of time is O (E + V) because we go through all the vertices in the graph and also go over the whole edge of the graph.
+//     *
+//     * @param src
+//     * @param dest
+//     */
+//    public void _short_Path(int src, int dest) {
+//        dist.put(src, 0.0); // Enter the distance of the first vertex
+//       // graph.getNode(src).setTag(0);
+//
+//        //Go over all the vertices in the graph.
+//        for (node_data vertex : graph.getV()) {
+//
+//           //Checks if we have worked on the vertex if not you will enter and perform the actions.
+//            if (dist.get(vertex.getKey()) != null) {
+//
+//                for (edge_data e : graph.getE(vertex.getKey())) { // Beyond all the neighbors.
+//
+//                   //Calculating the weight from the source vertex to the neighboring vertex
+//                    // includes the distance we traveled to the source.
+//                    double newDist = dist.get(vertex.getKey()) + e.getWeight();
+//
+//                    //If the neighbor first came to him, update the distance and add it to the route list
+//                    if (dist.get(e.getDest()) == null) {
+//                        dist.put(e.getDest(), newDist);
+//                        path.put(e.getDest(), vertex.getKey());
+//                    }
+//
+//                    // If we have already passed, check whether the new distance is small
+//                    // and the existing one, then replace the values.
+//                    else if (newDist < dist.get(e.getDest())){
+//                             dist.put(e.getDest(), newDist);
+//                             path.put(e.getDest(), e.getSrc());
+//                           }
+//                }
+//            }
+//        }
+//        for (int i : dist.keySet()) {            //Enter the distance of each vertex
+//            double x = dist.get(i);
+//            graph.getNode(i).setWeight(x);
+//        }
+//
+//    }
 
     /**
      * returns the length of the shortest path between src to dest
@@ -178,15 +172,15 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public double shortestPathDist(int src, int dest) {
-
-        if (graph.getNode(src) != null && graph.getNode(dest) != null) {
-            if (dest == src)
-                return 0;
-            _short_Path(src, dest);
-            return dist.get(dest); // Runs the algorithm with the source and checks what the weight of the final vertex is
-
-        }
-        return -1;
+        if (graph.getNode(src) == null || graph.getNode(dest) == null)
+            return -1;
+        if (src == dest)
+            return 0;
+        resetTI(graph);
+        dijkstra(src,dest);
+        if (graph.getNode(dest).getWeight()==0)        // true only if we didn't visit dest node
+            return -1;
+        return graph.getNode(dest).getWeight();
     }
 
     /**
@@ -210,29 +204,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        if (graph.getNode(src) != null && graph.getNode(dest) != null) {
-            _short_Path(src, dest);
-            List<node_data> list = new LinkedList<node_data>();
-            int[] path2 = new int[graph.nodeSize() + 1];
-            int count = 0;
-            if (dist.get(dest) != null) {
-                //Go over the vertices, from the final vertex to the beginning.
-                //Inserting each vertex into an array that maintains the entire shortest vertex path.
-                for (int i = dest; i != src; i = paht.get(i)) {
-                    if (count < path2.length && dist.get(dest) != null)
-                        path2[count] = i;
-                    count++;
-                }
-            }
-            if (count <= graph.nodeSize()) {//Insertion of the first organ
-                path2[count] = src;
-            }
-            for (int i = count; i >= 0; i--) { // Adding organs to the list from beginning to end
-                list.add(graph.getNode(path2[i]));
-            }
-            return list;
+        List<node_data> ans = new ArrayList<>();
+        if (src==dest) {
+            ans.add(graph.getNode(src));
+            return ans;
         }
-        return null;
+        if (shortestPathDist(src, dest)==-1 )
+            return null;
+        for (Integer i=dest ; i!=-1 ; i=path.get(i)){
+            ans.add(graph.getNode(i));
+        }
+        Collections.reverse(ans);
+        return ans;
     }
 
     /**
@@ -259,5 +242,82 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public boolean load(String file) {
         return false;
+    }
+
+    /**
+     * Dijkstra's algorithm useful to find the shortest path between two given nodes,
+     * in a weighted graph. It picks the unvisited vertex with the lowest distance,
+     * calculates the distance through it to each unvisited neighbor, and updates
+     * the neighbor's distance if smaller. Mark visited when done with neighbors.
+     * 'Tag' - is for calculate the distance to this vertex.
+     * 'info' - is for mark if the vertex visited.
+     * 'parent' - HashMap for each vertex to save his parent and rebuild into a list.
+     * Time complexity: O(E+VLOGV)
+     * @param start
+     * @param end
+     */
+    private void dijkstra(int start, int end){
+        PriorityQueue<node_data> q =new PriorityQueue<node_data>(new weightComp());
+        q.add(graph.getNode(start));
+        path.put(start,-1);                 //adding the src to the path and queue
+        while (!q.isEmpty()){
+            node_data curr = q.poll();
+            if(curr.getInfo()==null){       //true if we didn't visit this node
+                curr.setInfo("v");
+                if (curr.getKey()==end)     //when we get to dest node
+                    return;
+                for (edge_data i : graph.getE(curr.getKey())) {     //moving on each neighbour of curr
+                    node_data temp = graph.getNode(i.getDest());
+                    if (temp.getInfo() == null) {                //true if we didn't visit this node
+                        double w = i.getWeight();
+                        w += curr.getWeight();
+                        if (temp.getWeight() != 0) {
+                            if (w < temp.getWeight()) {             //if the new weight is less then the exist
+                               temp.setWeight(w);
+                                path.put(i.getDest(), curr.getKey());
+                            }
+                        } else {                                    //if it's first time we reach to this node
+                           temp.setWeight(w);
+                            path.put(i.getDest(), curr.getKey());
+                        }
+                        q.add(temp);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * reset 'tag','info' and 'weight' fields of each node in a given graph.
+     * to reuse them for next time.
+     * @param g
+     */
+    private void resetTI(directed_weighted_graph g){
+        Collection<node_data> map = graph.getV();       //set of all the nodes in the graph
+        for (node_data i : map) {                   //reset info to 'null'
+            i.setInfo(null);
+        }
+        for (node_data i : map) {                   //reset tag to '0'
+            i.setTag(0);
+        }
+        for (node_data i : map) {                   //reset weight to '0'
+            i.setWeight(0);
+        }
+    }
+
+    /**
+     * inner class for using Comparator. this is for manage priority queue in bfsW method.
+     * compare the weight of each node.
+     */
+    private static class weightComp implements Comparator<node_data>{
+        @Override
+        public int compare(node_data o1, node_data o2) {
+            if (o1.getWeight() == o2.getWeight())
+                return 0;
+            if (o1.getWeight() > o2.getWeight())
+                return 1;
+            return -1;
+        }
     }
 }
