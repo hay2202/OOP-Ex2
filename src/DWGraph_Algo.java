@@ -7,6 +7,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     private directed_weighted_graph graph;
     HashMap<Integer, Double> dist; //  Length from src -> dest
     HashMap<Integer, Integer> paht; // path from src -> dest .
+    private double inf = Double.POSITIVE_INFINITY;
 
     public DWGraph_Algo() {
         graph = new DWGraph_DS();
@@ -127,13 +128,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     public void _short_Path(int src, int dest) {
         dist.put(src, 0.0); // Enter the distance of the first vertex
        // graph.getNode(src).setTag(0);
-
+        for (node_data i : graph.getV()) { //reset all elments
+            i.setInfo(null);
+        }
         //Go over all the vertices in the graph.
         for (node_data vertex : graph.getV()) {
 
            //Checks if we have worked on the vertex if not you will enter and perform the actions.
             if (dist.get(vertex.getKey()) != null) {
-
                 for (edge_data e : graph.getE(vertex.getKey())) { // Beyond all the neighbors.
 
                    //Calculating the weight from the source vertex to the neighboring vertex
@@ -141,7 +143,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                     double newDist = dist.get(vertex.getKey()) + e.getWeight();
 
                     //If the neighbor first came to him, update the distance and add it to the route list
-                    if (dist.get(e.getDest()) == null) {
+                    if (graph.getNode(e.getDest()).getInfo() != "p") {
                         dist.put(e.getDest(), newDist);
                         paht.put(e.getDest(), vertex.getKey());
                     }
@@ -158,7 +160,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         for (int i : dist.keySet()) { //Enter the distance of each vertex
             double x = dist.get(i);
-            graph.getNode(i).setTag((int) x); // i dont know if need cast ???????
+            graph.getNode(i).setWeight(x); // i dont know if need cast ???????
         }
 
     }

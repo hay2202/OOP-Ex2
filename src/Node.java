@@ -4,7 +4,7 @@ public class Node implements node_data {
     private double weight;
     private String info;
     private geo_location location;
-    private static int counter;
+    private static int counter=1;
 
     public Node(){
         this.key=counter++;
