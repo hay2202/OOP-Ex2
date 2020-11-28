@@ -108,12 +108,6 @@ public class Node implements node_data {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "key=" + key +
-                ", tag=" + tag +
-                ", weight=" + weight +
-                ", info='" + info + '\'' +
-                ", location=" + location +
-                '}';
+        return "Node # "+key;
     }
 }
