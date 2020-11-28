@@ -1,23 +1,23 @@
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
-public class DWGraph_DS implements directed_weighted_graph{
+public class DWGraph_DS implements directed_weighted_graph {
 
-    private int mc, numOfEdges,numOfNodes;
-    private HashMap<Integer,node_data> mapNodes;          //hashmap of all the nodes.
-    private HashMap<Integer,HashMap<Integer,edge_data>> mapEdges;   //every node has hashmap of his neighbours.
-    private HashMap<Integer , List<Integer>> destToSrc ;
-    public DWGraph_DS (){
-        mc=numOfEdges=numOfNodes=0;
+    private int mc, numOfEdges, numOfNodes;
+    private HashMap<Integer, node_data> mapNodes;          //hashmap of all the nodes.
+    private HashMap<Integer, HashMap<Integer, edge_data>> mapEdges;   //every node has hashmap of his neighbours.
+    private HashMap<Integer, HashMap<Integer, Double>> destToSrc; // A vertex that receives .
+
+    public DWGraph_DS() {
+        mc = numOfEdges = numOfNodes = 0;
         mapNodes = new HashMap<>();
         mapEdges = new HashMap<>();
-        destToSrc =new HashMap<>();
+        destToSrc = new HashMap<Integer, HashMap<Integer, Double>>();
     }
 
     /**
      * returns the node_data by the node_id,
+     *
      * @param key - the node_id
      * @return the node_data by the node_id, null if none.
      */
@@ -30,6 +30,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * returns the data of the edge (src,dest), null if none.
+     *
      * @param src
      * @param dest
      * @return
@@ -37,7 +38,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     @Override
     public edge_data getEdge(int src, int dest) {
         if (mapEdges.containsKey(src)) {
-            if(mapEdges.get(src).containsKey(dest)) {
+            if (mapEdges.get(src).containsKey(dest)) {
                 return mapEdges.get(src).get(dest);
             }
         }
@@ -46,14 +47,16 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * adds a new node to the graph with the given node_data.
+     *
      * @param n
      */
     @Override
     public void addNode(node_data n) {
-        if (!mapNodes.containsKey(n.getKey())){
+        if (!mapNodes.containsKey(n.getKey())) {
             HashMap<Integer, edge_data> edge = new HashMap<>();
-            mapEdges.put(n.getKey(),edge);
-            mapNodes.put(n.getKey(),n);
+            mapEdges.put(n.getKey(), edge);
+            mapNodes.put(n.getKey(), n);
+            destToSrc.put(n.getKey(), new HashMap<Integer, Double>());
             numOfNodes++;
             mc++;
         }
@@ -61,24 +64,24 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Connects an edge with weight w between node src to node dest.
+     *
      * @param src  - the source of the edge.
      * @param dest - the destination of the edge.
      * @param w    - positive weight representing the cost (aka time, price, etc) between src-->dest.
      */
     @Override
     public void connect(int src, int dest, double w) {
-        if (getNode(src)!= null && getNode(dest)== null){
-            if (src != dest && getEdge(src,dest)==null) {
-                edge_data edge = new Edge(src,dest,w);
-                mapEdges.get(src).put(dest,edge);
-                destToSrc.get(src).add(dest);
+        if (getNode(src) != null && getNode(dest) != null) {
+            if (src != dest && getEdge(src, dest) == null) {
+                edge_data edge = new Edge(src, dest, w);
+                mapEdges.get(src).put(dest, edge);
+                destToSrc.get(dest).put(src, w);
                 numOfEdges++;
                 mc++;
-            }
-            else if(getNode(dest)!= null && getEdge(src, dest).getWeight()!=w)  //the edge exist, update only the weight
+            } else if (getNode(dest) != null && getEdge(src, dest).getWeight() != w)  //the edge exist, update only the weight
             {
-                edge_data edge = new Edge(src,dest,w);
-                mapEdges.get(src).replace(dest,edge);
+                edge_data edge = new Edge(src, dest, w);
+                mapEdges.get(src).replace(dest, edge);
                 mc++;
             }
         }
@@ -87,6 +90,7 @@ public class DWGraph_DS implements directed_weighted_graph{
     /**
      * This method returns a pointer (shallow copy) for the
      * collection representing all the nodes in the graph.
+     *
      * @return Collection<node_data>
      */
     @Override
@@ -98,12 +102,13 @@ public class DWGraph_DS implements directed_weighted_graph{
      * This method returns a pointer (shallow copy) for the
      * collection representing all the edges getting out of
      * the given node (all the edges starting (source) at the given node).
+     *
      * @param node_id
      * @return Collection<edge_data>
      */
     @Override
     public Collection<edge_data> getE(int node_id) {
-        if(mapEdges.containsKey(node_id))
+        if (mapEdges.containsKey(node_id))
             return mapEdges.get(node_id).values();
         return null;
     }
@@ -112,24 +117,30 @@ public class DWGraph_DS implements directed_weighted_graph{
      * Deletes the node (with the given ID) from the graph -
      * and removes all edges which starts or ends at this node.
      * This method should run in O(k), V.degree=k, as all the edges should be removed.
+     *
      * @param key
      * @return the data of the removed node (null if none).
      */
     @Override
     public node_data removeNode(int key) {
-        int dest=0;
-        if (mapNodes.containsKey(key) && mapEdges.containsKey(key)){ //check if the key is contains
-            node_data save=mapNodes.get(key);
-            HashMap<Integer , edge_data> nei=mapEdges.get(key); // make map for move on edge
-            for (Integer i:nei.keySet()) {
-                removeEdge(key , i); // remove edge from vertex(src) to other node(dest)
+        int dest = 0;
+        edge_data e;
+        if (mapNodes.containsKey(key) && mapEdges.containsKey(key)) { //check if the key is contains
+            node_data save = mapNodes.get(key);
+            HashMap<Integer, edge_data> nei = mapEdges.get(key);// make map for move on edge
+            for (Integer i : nei.keySet()) { //Who am I going to.
+
+                destToSrc.get(i).remove(key);
+                numOfEdges--;
+                mc++;// remove edge from vertex(src) to other node(dest)
             }
-            if(destToSrc.containsKey(key)) // remove all the edge from the other node to vertex
+            if (destToSrc.containsKey(key)) // remove all the edge from the other node to vertex
             {
-                while(!destToSrc.get(key).isEmpty())
-                {
-                    dest=destToSrc.get(key).remove(0);
-                    removeEdge(dest , key ); // remove all the edge from other node to vertex
+                for (int i : destToSrc.get(key).keySet()) { //Who entered me
+                    mapEdges.get(i).remove(key);
+                   // destToSrc.get(i).remove(key);
+                    numOfEdges--; // remove all the edge from other node to vertex
+                    mc++;
                 }
 
             }
@@ -137,6 +148,9 @@ public class DWGraph_DS implements directed_weighted_graph{
             mapEdges.get(key).clear(); // clear all the element for vertex
             mapEdges.remove(key);
             mapNodes.remove(key);
+            destToSrc.get(key).clear();
+            destToSrc.remove(key);
+            numOfNodes--;
             mc--;
             return save;
         }
@@ -145,16 +159,18 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Deletes the edge from the graph,
+     *
      * @param src
      * @param dest
      * @return the data of the removed edge (null if none).
      */
     @Override
     public edge_data removeEdge(int src, int dest) {
-        if (getEdge(src, dest)==null)
+        if (getEdge(src, dest) == null)
             return null;
-        edge_data edge= mapEdges.get(src).get(dest);
+        edge_data edge = mapEdges.get(src).get(dest);
         mapEdges.get(src).remove(dest);
+        destToSrc.get(dest).remove(src);
         numOfEdges--;
         mc++;
         return edge;
@@ -162,6 +178,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Returns the number of vertices (nodes) in the graph.
+     *
      * @return
      */
     @Override
@@ -171,6 +188,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Returns the number of edges (assume directional graph).
+     *
      * @return
      */
     @Override
@@ -180,6 +198,7 @@ public class DWGraph_DS implements directed_weighted_graph{
 
     /**
      * Returns the Mode Count - for testing changes in the graph.
+     *
      * @return
      */
     @Override
