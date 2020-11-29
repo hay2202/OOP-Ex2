@@ -1,3 +1,7 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.*;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
@@ -104,58 +108,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
-//    /**
-//     * dist - contains the map of the vertices and each value contains the route from the source to the vertex.
-//     * path- contains the route map which each vertex contains its father.
-//     * This algorithm we get a vertex and start going over all the other vertices in the graph.
-//     * In the first loop you go through all the existing vertices in the graph.
-//     * Take a vertex from the graph and ask if we have already gone over it, if so, move on to the next vertex,
-//     * If not go ahead and get the edge list he has which leads to his neighbors.
-//     * Calculate the length of the neighboring vertex trajectory with the weight of the edge and the vertex from which it comes.
-//     * If the length of a route already exists, check whether the vertex that contains the length is larger than the route we calculated, if so, we will replace the length on the map.
-//     * Keeping track is put in that each vertex contains its father (where it came from) and thus the track is saved.
-//     * The complexity of time is O (E + V) because we go through all the vertices in the graph and also go over the whole edge of the graph.
-//     *
-//     * @param src
-//     * @param dest
-//     */
-//    public void _short_Path(int src, int dest) {
-//        dist.put(src, 0.0); // Enter the distance of the first vertex
-//       // graph.getNode(src).setTag(0);
-//
-//        //Go over all the vertices in the graph.
-//        for (node_data vertex : graph.getV()) {
-//
-//           //Checks if we have worked on the vertex if not you will enter and perform the actions.
-//            if (dist.get(vertex.getKey()) != null) {
-//
-//                for (edge_data e : graph.getE(vertex.getKey())) { // Beyond all the neighbors.
-//
-//                   //Calculating the weight from the source vertex to the neighboring vertex
-//                    // includes the distance we traveled to the source.
-//                    double newDist = dist.get(vertex.getKey()) + e.getWeight();
-//
-//                    //If the neighbor first came to him, update the distance and add it to the route list
-//                    if (dist.get(e.getDest()) == null) {
-//                        dist.put(e.getDest(), newDist);
-//                        path.put(e.getDest(), vertex.getKey());
-//                    }
-//
-//                    // If we have already passed, check whether the new distance is small
-//                    // and the existing one, then replace the values.
-//                    else if (newDist < dist.get(e.getDest())){
-//                             dist.put(e.getDest(), newDist);
-//                             path.put(e.getDest(), e.getSrc());
-//                           }
-//                }
-//            }
-//        }
-//        for (int i : dist.keySet()) {            //Enter the distance of each vertex
-//            double x = dist.get(i);
-//            graph.getNode(i).setWeight(x);
-//        }
-//
-//    }
 
     /**
      * returns the length of the shortest path between src to dest
@@ -221,13 +173,25 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     /**
      * Saves this weighted (directed) graph to the given
      * file name - in JSON format
-     *
      * @param file - the file name (may include a relative path).
      * @return true - iff the file was successfully saved
      */
     @Override
     public boolean save(String file) {
-        return false;
+        //Making json object
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(graph);
+
+        //write json to file
+        try {
+            PrintWriter pw = new PrintWriter(new File(file));
+            pw.write(json);
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -235,23 +199,37 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * if the file was successfully loaded - the underlying graph
      * of this class will be changed (to the loaded one), in case the
      * graph was not loaded the original graph should remain "as is".
-     *
      * @param file - file name of JSON file
      * @return true - iff the graph was successfully loaded.
      */
     @Override
     public boolean load(String file) {
-        return false;
+        //Making json object
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DWGraph_DS.class, new GraphJsonDeserializer());
+        Gson gson =builder.create();
+
+        //read from json
+        try {
+            FileReader fr = new FileReader(file);
+            directed_weighted_graph loadedGraph = gson.fromJson(fr,DWGraph_DS.class);
+            this.init(loadedGraph);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     /**
      * Dijkstra's algorithm useful to find the shortest path between two given nodes,
-     * in a weighted graph. It picks the unvisited vertex with the lowest distance,
+     * in a weighted directed graph. It picks the unvisited vertex with the lowest distance,
      * calculates the distance through it to each unvisited neighbor, and updates
      * the neighbor's distance if smaller. Mark visited when done with neighbors.
-     * 'Tag' - is for calculate the distance to this vertex.
+     * 'weight' - is for calculate the distance to this vertex.
      * 'info' - is for mark if the vertex visited.
-     * 'parent' - HashMap for each vertex to save his parent and rebuild into a list.
+     * 'path' - HashMap for each vertex to save his parent and rebuild into a list.
      * Time complexity: O(E+VLOGV)
      * @param start
      * @param end

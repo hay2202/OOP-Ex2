@@ -11,7 +11,7 @@ public class Node implements node_data {
         this.tag=0;
         this.weight=0;
         this.info=null;
-//        this.location=??
+        this.location=null;
     }
 
 //copy constructor
@@ -21,6 +21,12 @@ public class Node implements node_data {
         this.weight=n.getWeight();
         this.info=n.getInfo();
         this.location=n.getLocation();
+    }
+
+    public Node(int key, int tag, double weight){
+        this.key=key;
+        this.tag=tag;
+        this.weight=weight;
     }
     /**
      * Returns the key (id) associated with this node.

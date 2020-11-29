@@ -11,6 +11,7 @@ public class Edge implements edge_data {
         info=null;
         tag=0;
     }
+
     /**
      * The id of the source node of this edge.
      * @return
