@@ -23,6 +23,9 @@ public class GeoLocation implements geo_location {
 
     @Override
     public double distance(geo_location g) {
-        return 0;
+        double powX=Math.pow(this.x-g.x(),2);
+        double powY=Math.pow(this.y-g.y(),2);
+        double powZ=Math.pow(this.z-g.z(),2);
+        return Math.sqrt((powX+powY+powZ));
     }
 }

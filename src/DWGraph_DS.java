@@ -12,7 +12,7 @@ public class DWGraph_DS implements directed_weighted_graph {
         mc = numOfEdges = numOfNodes = 0;
         mapNodes = new HashMap<>();
         mapEdges = new HashMap<>();
-        destToSrc = new HashMap<Integer, HashMap<Integer, Double>>();
+        destToSrc = new HashMap<>();
     }
 
     /**
@@ -136,6 +136,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             destToSrc.remove(key);
             mapEdges.remove(key);
             mapNodes.remove(key);
+            numOfNodes--;
             mc--;
             return save;
         }
@@ -196,4 +197,29 @@ public class DWGraph_DS implements directed_weighted_graph {
                 ", mapEdges=" + mapEdges +
                 '}';
     }
+
+    /**
+     * this method if the given Object is equals to this graph.
+     * @param o- checking if it's equals graph
+     * @return true or false
+     */
+    @Override
+    public boolean equals(Object o){
+        if(this==o)
+            return true;
+        if (o instanceof directed_weighted_graph){
+            directed_weighted_graph temp = (directed_weighted_graph) o;
+            if (this.nodeSize()!=temp.nodeSize() || this.edgeSize()!= temp.edgeSize())
+                return false;
+            for (node_data i : this.getV()){
+                if(temp.getNode(i.getKey())== null)
+                    return false;
+                if (this.getE(i.getKey()).size() != temp.getE(i.getKey()).size())
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

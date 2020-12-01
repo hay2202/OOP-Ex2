@@ -60,31 +60,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return copyGraph;
     }
 
-
-    /**
-     * Goes through all the vertices and sides of the graph.
-     * First check if we have passed the vertex in each operation of the recursion.
-     * Then marks the vertex we went through.
-     * He then goes through a loop on all of his neighbors.
-     * Performs on any vertex that houses the recursion.
-     * This action in recursion we always go back to the next neighbor
-     * and from there continue until finally he returns to the starting point.
-     * The time complexity of the algorithm is O(E+V) ,Because it goes through
-     * all the vertices and edges of the graph.
-     * <p>
-     * "p"- This is a marking we have passed.
-     * @param key-vertex start.
-     */
-    public void dfs(int key) { //to is connect
-        if (graph.getNode(key).getInfo() == "p") // "p"- This is a marking we have passed.
-            return;
-        graph.getNode(key).setInfo("p");
-
-        for (edge_data next : graph.getE(key))
-            dfs(next.getDest());
-
-    }
-
     /**
      * Returns true if and only if (iff) there is a valid path from each node to each
      * other node. NOTE: assume directional graph (all n*(n-1) ordered pairs).
@@ -220,6 +195,29 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Goes through all the vertices and sides of the graph.
+     * First check if we have passed the vertex in each operation of the recursion.
+     * Then marks the vertex we went through.
+     * He then goes through a loop on all of his neighbors.
+     * Performs on any vertex that houses the recursion.
+     * This action in recursion we always go back to the next neighbor
+     * and from there continue until finally he returns to the starting point.
+     * The time complexity of the algorithm is O(E+V) ,Because it goes through
+     * all the vertices and edges of the graph.
+     * <p>
+     * "p"- This is a marking we have passed.
+     * @param key-vertex start.
+     */
+    private void dfs(int key) { //to is connect
+        if (graph.getNode(key).getInfo() == "p") // "p"- This is a marking we have passed.
+            return;
+        graph.getNode(key).setInfo("p");
+
+        for (edge_data next : graph.getE(key))
+            dfs(next.getDest());
     }
 
     /**

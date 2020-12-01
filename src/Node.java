@@ -4,10 +4,18 @@ public class Node implements node_data {
     private double weight;
     private String info;
     private geo_location location;
-    private static int counter=1;
+//    private static int counter=0;
 
-    public Node(){
-        this.key=counter++;
+//    public Node(){
+//        this.key=counter++;
+//        this.tag=0;
+//        this.weight=0;
+//        this.info=null;
+//        this.location=null;
+//    }
+
+        public Node(int key){
+        this.key=key;
         this.tag=0;
         this.weight=0;
         this.info=null;
