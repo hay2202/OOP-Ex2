@@ -1,3 +1,5 @@
+package api;
+
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -19,7 +21,7 @@ public class GraphJsonDeserializer implements JsonDeserializer<directed_weighted
             int tag = jsonValueElement.getAsJsonObject().get("tag").getAsInt();
             double weight = jsonValueElement.getAsJsonObject().get("weight").getAsDouble();
 //            String info = jsonValueElement.getAsJsonObject().get("info").getAsString();
-//            geo_location location = jsonValueElement.getAsJsonObject().get("location");
+//            api.geo_location location = jsonValueElement.getAsJsonObject().get("location");
             node_data n = new Node(key,tag,weight);
             graph.addNode(n);
         }

@@ -1,3 +1,4 @@
+import api.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class DWGraph_AlgoTest {
         System.out.println("Run time: "+dt+" seconds");
     }
 
-//    public static void graph_creator(int v_size, int e_size, directed_weighted_graph gr) {
+//    public static void graph_creator(int v_size, int e_size, api.directed_weighted_graph gr) {
 //        for(int i=0;i<v_size;i++) {
 //            gr.addNode();
 //        }
@@ -107,6 +108,17 @@ class DWGraph_AlgoTest {
      */
     @Test
     void isConnected() {
+        assertTrue(g2.isConnected());
+        g.removeEdge(9,0);
+        assertFalse(g2.isConnected());
+    }
+
+    /**
+     * first the graph is connected
+     * then removing a node and make the graph unconnected.
+     */
+    @Test
+    void isConnected2() {
         assertTrue(g2.isConnected());
         g.removeEdge(7,6);
         assertFalse(g2.isConnected());

@@ -1,3 +1,5 @@
+package api;
+
 public class EdgeLocation implements edge_location {
     /**
      * Returns the edge on which the location is.

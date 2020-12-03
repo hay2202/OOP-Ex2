@@ -1,3 +1,5 @@
+package api;
+
 public class GeoLocation implements geo_location {
     private double x,y,z;
 

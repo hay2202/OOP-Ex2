@@ -1,3 +1,5 @@
+package api;
+
 import java.util.*;
 
 
@@ -16,9 +18,9 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     /**
-     * returns the node_data by the node_id,
+     * returns the api.node_data by the node_id,
      * @param key - the node_id
-     * @return the node_data by the node_id, null if none.
+     * @return the api.node_data by the node_id, null if none.
      */
     @Override
     public node_data getNode(int key) {
@@ -44,7 +46,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     /**
-     * adds a new node to the graph with the given node_data.
+     * adds a new node to the graph with the given api.node_data.
      * @param n
      */
     @Override
@@ -87,7 +89,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     /**
      * This method returns a pointer (shallow copy) for the
      * collection representing all the nodes in the graph.
-     * @return Collection<node_data>
+     * @return Collection<api.node_data>
      */
     @Override
     public Collection<node_data> getV() {
@@ -99,7 +101,7 @@ public class DWGraph_DS implements directed_weighted_graph {
      * collection representing all the edges getting out of
      * the given node (all the edges starting (source) at the given node).
      * @param node_id
-     * @return Collection<edge_data>
+     * @return Collection<api.edge_data>
      */
     @Override
     public Collection<edge_data> getE(int node_id) {
