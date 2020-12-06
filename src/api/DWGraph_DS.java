@@ -1,3 +1,5 @@
+package api;
+
 import java.util.*;
 
 
@@ -12,13 +14,13 @@ public class DWGraph_DS implements directed_weighted_graph {
         mc = numOfEdges = numOfNodes = 0;
         mapNodes = new HashMap<>();
         mapEdges = new HashMap<>();
-        destToSrc = new HashMap<Integer, HashMap<Integer, Double>>();
+        destToSrc = new HashMap<>();
     }
 
     /**
-     * returns the node_data by the node_id,
+     * returns the api.node_data by the node_id,
      * @param key - the node_id
-     * @return the node_data by the node_id, null if none.
+     * @return the api.node_data by the node_id, null if none.
      */
     @Override
     public node_data getNode(int key) {
@@ -44,7 +46,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     /**
-     * adds a new node to the graph with the given node_data.
+     * adds a new node to the graph with the given api.node_data.
      * @param n
      */
     @Override
@@ -87,7 +89,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     /**
      * This method returns a pointer (shallow copy) for the
      * collection representing all the nodes in the graph.
-     * @return Collection<node_data>
+     * @return Collection<api.node_data>
      */
     @Override
     public Collection<node_data> getV() {
@@ -99,7 +101,7 @@ public class DWGraph_DS implements directed_weighted_graph {
      * collection representing all the edges getting out of
      * the given node (all the edges starting (source) at the given node).
      * @param node_id
-     * @return Collection<edge_data>
+     * @return Collection<api.edge_data>
      */
     @Override
     public Collection<edge_data> getE(int node_id) {
@@ -136,6 +138,7 @@ public class DWGraph_DS implements directed_weighted_graph {
             destToSrc.remove(key);
             mapEdges.remove(key);
             mapNodes.remove(key);
+            numOfNodes--;
             mc--;
             return save;
         }
@@ -196,4 +199,29 @@ public class DWGraph_DS implements directed_weighted_graph {
                 ", mapEdges=" + mapEdges +
                 '}';
     }
+
+    /**
+     * this method if the given Object is equals to this graph.
+     * @param o- checking if it's equals graph
+     * @return true or false
+     */
+    @Override
+    public boolean equals(Object o){
+        if(this==o)
+            return true;
+        if (o instanceof directed_weighted_graph){
+            directed_weighted_graph temp = (directed_weighted_graph) o;
+            if (this.nodeSize()!=temp.nodeSize() || this.edgeSize()!= temp.edgeSize())
+                return false;
+            for (node_data i : this.getV()){
+                if(temp.getNode(i.getKey())== null)
+                    return false;
+                if (this.getE(i.getKey()).size() != temp.getE(i.getKey()).size())
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

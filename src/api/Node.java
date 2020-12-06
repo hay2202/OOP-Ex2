@@ -1,20 +1,21 @@
+package api;
+
 public class Node implements node_data {
 
     private int key, tag;
     private double weight;
     private String info;
     private geo_location location;
-    private static int counter=1;
 
-    public Node(){
-        this.key=counter++;
+    /////// constructors //////////
+        public Node(int key){
+        this.key=key;
         this.tag=0;
         this.weight=0;
         this.info=null;
-//        this.location=??
+        this.location=null;
     }
 
-//copy constructor
     public Node(node_data n ){
         this.key=n.getKey();
         this.tag=n.getTag();
@@ -22,6 +23,13 @@ public class Node implements node_data {
         this.info=n.getInfo();
         this.location=n.getLocation();
     }
+
+    public Node(int key, int tag, double weight){
+        this.key=key;
+        this.tag=tag;
+        this.weight=weight;
+    }
+
     /**
      * Returns the key (id) associated with this node.
      * @return
