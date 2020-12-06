@@ -6,14 +6,14 @@ import java.util.*;
 public class DWGraph_DS implements directed_weighted_graph {
 
     private int mc, numOfEdges, numOfNodes;
-    private HashMap<Integer, node_data> mapNodes;          //hashmap of all the nodes.
-    private HashMap<Integer, HashMap<Integer, edge_data>> mapEdges;   //every node has hashmap of his going out edges.
+    private HashMap<Integer, node_data> Nodes;          //hashmap of all the nodes.
+    private HashMap<Integer, HashMap<Integer, edge_data>> Edges;   //every node has hashmap of his going out edges.
     private HashMap<Integer, HashMap<Integer, Double>> destToSrc; // a map of incoming edges to the node .
 
     public DWGraph_DS() {
         mc = numOfEdges = numOfNodes = 0;
-        mapNodes = new HashMap<>();
-        mapEdges = new HashMap<>();
+        Nodes = new HashMap<>();
+        Edges = new HashMap<>();
         destToSrc = new HashMap<>();
     }
 
@@ -24,8 +24,8 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public node_data getNode(int key) {
-        if (mapNodes.containsKey(key))
-            return mapNodes.get(key);
+        if (Nodes.containsKey(key))
+            return Nodes.get(key);
         return null;
     }
 
@@ -37,9 +37,9 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public edge_data getEdge(int src, int dest) {
-        if (mapEdges.containsKey(src)) {
-            if (mapEdges.get(src).containsKey(dest)) {
-                return mapEdges.get(src).get(dest);
+        if (Edges.containsKey(src)) {
+            if (Edges.get(src).containsKey(dest)) {
+                return Edges.get(src).get(dest);
             }
         }
         return null;
@@ -51,10 +51,10 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public void addNode(node_data n) {
-        if (!mapNodes.containsKey(n.getKey())) {
+        if (!Nodes.containsKey(n.getKey())) {
             HashMap<Integer, edge_data> edge = new HashMap<>();
-            mapEdges.put(n.getKey(), edge);
-            mapNodes.put(n.getKey(), n);
+            Edges.put(n.getKey(), edge);
+            Nodes.put(n.getKey(), n);
             destToSrc.put(n.getKey(), new HashMap<Integer, Double>());
             numOfNodes++;
             mc++;
@@ -72,7 +72,7 @@ public class DWGraph_DS implements directed_weighted_graph {
         if (getNode(src) != null && getNode(dest) != null) {
             if (src != dest && getEdge(src, dest) == null) {
                 edge_data edge = new Edge(src, dest, w);
-                mapEdges.get(src).put(dest, edge);
+                Edges.get(src).put(dest, edge);
                 destToSrc.get(dest).put(src, w);
                 numOfEdges++;
                 mc++;
@@ -80,7 +80,7 @@ public class DWGraph_DS implements directed_weighted_graph {
                 if (getEdge(src, dest) != null && getEdge(src, dest).getWeight() != w)  //the edge exist, update only the weight
             {
                 edge_data edge = new Edge(src, dest, w);
-                mapEdges.get(src).replace(dest, edge);
+                Edges.get(src).replace(dest, edge);
                 mc++;
             }
         }
@@ -93,7 +93,7 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public Collection<node_data> getV() {
-        return mapNodes.values();
+        return Nodes.values();
     }
 
     /**
@@ -105,8 +105,8 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public Collection<edge_data> getE(int node_id) {
-        if (mapEdges.containsKey(node_id))
-            return mapEdges.get(node_id).values();
+        if (Edges.containsKey(node_id))
+            return Edges.get(node_id).values();
         return null;
     }
 
@@ -119,9 +119,9 @@ public class DWGraph_DS implements directed_weighted_graph {
      */
     @Override
     public node_data removeNode(int key) {
-        if (mapNodes.containsKey(key) && mapEdges.containsKey(key)) { //check if the key is contains
-            node_data save = mapNodes.get(key);
-            HashMap<Integer, edge_data> nei = mapEdges.get(key); // make map for move on edge
+        if (Nodes.containsKey(key) && Edges.containsKey(key)) { //check if the key is contains
+            node_data save = Nodes.get(key);
+            HashMap<Integer, edge_data> nei = Edges.get(key); // make map for move on edge
             for (Integer i : nei.keySet()) {        // remove edge from vertex(src) to other node(dest)
                 destToSrc.get(i).remove(key);
                 numOfEdges--;
@@ -130,14 +130,14 @@ public class DWGraph_DS implements directed_weighted_graph {
             if (destToSrc.containsKey(key))            // remove all the edge from the other node to vertex
             {
                 for (int i : destToSrc.get(key).keySet()) {      //Who entered me
-                    mapEdges.get(i).remove(key);
+                    Edges.get(i).remove(key);
                     numOfEdges--;             // remove all the edge from other node to vertex
                     mc++;
                 }
             }
             destToSrc.remove(key);
-            mapEdges.remove(key);
-            mapNodes.remove(key);
+            Edges.remove(key);
+            Nodes.remove(key);
             numOfNodes--;
             mc--;
             return save;
@@ -155,8 +155,8 @@ public class DWGraph_DS implements directed_weighted_graph {
     public edge_data removeEdge(int src, int dest) {
         if (getEdge(src, dest) == null)
             return null;
-        edge_data edge = mapEdges.get(src).get(dest);
-        mapEdges.get(src).remove(dest);
+        edge_data edge = Edges.get(src).get(dest);
+        Edges.get(src).remove(dest);
         numOfEdges--;
         mc++;
         return edge;
@@ -195,8 +195,8 @@ public class DWGraph_DS implements directed_weighted_graph {
                 "mc=" + mc +
                 ", numOfEdges=" + numOfEdges +
                 ", numOfNodes=" + numOfNodes +
-                ", mapNodes=" + mapNodes +
-                ", mapEdges=" + mapEdges +
+                ", mapNodes=" + Nodes +
+                ", mapEdges=" + Edges +
                 '}';
     }
 

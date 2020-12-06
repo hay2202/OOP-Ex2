@@ -2,30 +2,30 @@ package api;
 
 public class Node implements node_data {
 
-    private int key, tag;
+    private int id, tag;
     private double weight;
     private String info;
-    private geo_location location;
+    private geo_location pos;
 
     /////// constructors //////////
         public Node(int key){
-        this.key=key;
+        this.id =key;
         this.tag=0;
         this.weight=0;
         this.info=null;
-        this.location=null;
+        this.pos =null;
     }
 
     public Node(node_data n ){
-        this.key=n.getKey();
+        this.id =n.getKey();
         this.tag=n.getTag();
         this.weight=n.getWeight();
         this.info=n.getInfo();
-        this.location=n.getLocation();
+        this.pos =n.getLocation();
     }
 
     public Node(int key, int tag, double weight){
-        this.key=key;
+        this.id =key;
         this.tag=tag;
         this.weight=weight;
     }
@@ -36,7 +36,7 @@ public class Node implements node_data {
      */
     @Override
     public int getKey() {
-        return this.key;
+        return this.id;
     }
 
     /**
@@ -46,7 +46,7 @@ public class Node implements node_data {
      */
     @Override
     public geo_location getLocation() {
-        return this.location;
+        return this.pos;
     }
 
     /**
@@ -55,7 +55,7 @@ public class Node implements node_data {
      */
     @Override
     public void setLocation(geo_location p) {
-        this.location=p;
+        this.pos =p;
     }
 
     /**
@@ -116,6 +116,6 @@ public class Node implements node_data {
 
     @Override
     public String toString() {
-        return "Node # "+key;
+        return "Node # "+ id;
     }
 }
