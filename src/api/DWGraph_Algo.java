@@ -192,8 +192,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             FileReader fr = new FileReader(file);
             directed_weighted_graph loadedGraph = gson.fromJson(fr, DWGraph_DS.class);
             this.init(loadedGraph);
-
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return false;
         }
