@@ -50,12 +50,13 @@ public class MyFrame extends JFrame {
 		int w = this.getWidth();
 		int h = this.getHeight();
 		g.clearRect(0, 0, w, h);
-	//	updateFrame();
+		updateFrame();
 		drawPokemons(g);
 		drawGraph(g);
 		drawAgants(g);
 		drawInfo(g);
 		drawTimer(g);
+		drawScore(g);
 
 	}
 	private void drawInfo(Graphics g) {
@@ -141,7 +142,18 @@ public class MyFrame extends JFrame {
 		g.drawString("Time: "+_ar.getGame().timeToEnd()/1000,40 , 60);
 	}
 
+	private void drawScore (Graphics g){
+		List<CL_Agent> rs = _ar.getAgents();
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Arial",Font.BOLD,12));
+		int y=60;
+		int i=0;
+		for (CL_Agent a : rs){
+			g.drawString("agent "+ a.getID()+" :	 "+a.getValue(),900 , y+i);
+			i+=20;
+		}
 
 	}
+}
 
 

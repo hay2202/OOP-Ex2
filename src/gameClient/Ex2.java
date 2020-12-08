@@ -2,21 +2,24 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 public class Ex2 implements Runnable{
-    private static MyFrame _win, log;
+    private static MyFrame _win;
     private static Arena _ar;
     private static long playerID;
     private static int  num_level;
+
     public static void main(String[] a){
         login();
         Thread client = new Thread(new Ex2());
@@ -25,24 +28,24 @@ public class Ex2 implements Runnable{
 
     @Override
     public void run() {
-        int scenario_num = 11;
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-//			int id = 999;
 //			game.login(id);
         String g = game.getGraph();
         String pks = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
-        init(game);
+        writeGraph(g);
+        dw_graph_algorithms gAlgo = new DWGraph_Algo();
+        gAlgo.load("loadGraph.txt");
+        directed_weighted_graph gg =gAlgo.getGraph();
+        init(game,gg);
 
         game.startGame();
-        _win.setTitle("Ex2 - OOP: Pokemons! ");
         int ind=0;
-        long dt=100;
+        long dt=40;
 
         while(game.isRunning()) {
             moveAgants(game, gg);
             try {
-                if(ind%3==0) {_win.repaint();}
+                if(ind%8==0) {_win.repaint();}
                 Thread.sleep(dt);
                 ind++;
             }
@@ -100,19 +103,17 @@ public class Ex2 implements Runnable{
         ans = itr.next().getDest();
         return ans;
     }
-    private void init(game_service game) {
+    private void init(game_service game, directed_weighted_graph gg) {
         String g = game.getGraph();
         String fs = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
         //gg.init(g);
         _ar = new Arena();
         _ar.setGraph(gg);
         _ar.setPokemons(Arena.json2Pokemons(fs));
         _ar.setGame(game);
-        _win = new MyFrame("test Ex2");
+        _win = new MyFrame("Ex2 - OOP: Pokemons! ");
         _win.setSize(1000, 700);
         _win.update(_ar);
-
 
         _win.show();
         String info = game.toString();
@@ -143,8 +144,8 @@ public class Ex2 implements Runnable{
         frame.setBounds(200, 0, 500, 500);
         try {
 
-            String id= JOptionPane.showInputDialog(frame, "Please insert ID");
-            String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]");
+            String id= JOptionPane.showInputDialog(frame, "Please insert ID","Login",3);
+            String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]","Level",3);
 
             playerID = Long.parseLong(id);
             num_level = Integer.parseInt(level);
@@ -157,5 +158,17 @@ public class Ex2 implements Runnable{
                     JOptionPane.ERROR_MESSAGE);
             num_level = 0;
         }
+    }
+
+    private static void writeGraph(String s){
+        try {
+            FileWriter fw = new FileWriter("loadGraph.txt");
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(s);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
