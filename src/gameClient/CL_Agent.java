@@ -20,10 +20,10 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-		
+
 		private double _value;
-		
-		
+
+
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
 			setMoney(0);
@@ -71,10 +71,10 @@ public class CL_Agent {
 					+ "\"pos\":\""+_pos.toString()+"\""
 					+ "}"
 					+ "}";
-			return ans;	
+			return ans;
 		}
 		private void setMoney(double v) {_value = v;}
-	
+
 		public boolean setNextNode(int dest) {
 			boolean ans = false;
 			int src = this._curr_node.getKey();
@@ -95,20 +95,20 @@ public class CL_Agent {
 			return toJSON();
 		}
 		public String toString1() {
-			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
+			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();
 			return ans;
 		}
 		public int getID() {
 			// TODO Auto-generated method stub
 			return this._id;
 		}
-	
+
 		public geo_location getLocation() {
 			// TODO Auto-generated method stub
 			return _pos;
 		}
 
-		
+
 		public double getValue() {
 			// TODO Auto-generated method stub
 			return this._value;
@@ -151,12 +151,20 @@ public class CL_Agent {
 					 dist = _curr_fruit.getLocation().distance(this._pos);
 				}
 				double norm = dist/de;
+<<<<<<< HEAD
 				double dt = w*norm / this.getSpeed(); 
+=======
+				double dt = w*norm / this.getSpeed();
+>>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
 				ddt = (long)(1000.0*dt);
 			}
 			this.set_sg_dt(ddt);
 		}
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}

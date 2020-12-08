@@ -20,21 +20,26 @@ import java.util.List;
  * code and not to take it "as is".
  *
  */
-public class MyFrame extends JFrame{
+public class MyFrame extends JFrame {
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
+	private int win_w = 500;
+	private int win_h = 500;
+	private String f = "file";
+
 	MyFrame(String a) {
 		super(a);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		int _ind = 0;
 	}
+
 	public void update(Arena ar) {
 		this._ar = ar;
 		updateFrame();
 	}
 
 	private void updateFrame() {
-
 		Range rx = new Range(20,this.getWidth()-20);
 		Range ry = new Range(this.getHeight()-10,150);
 		Range2D frame = new Range2D(rx,ry);
@@ -50,7 +55,8 @@ public class MyFrame extends JFrame{
 		drawGraph(g);
 		drawAgants(g);
 		drawInfo(g);
-		
+		drawTimer(g);
+
 	}
 	private void drawInfo(Graphics g) {
 		List<String> str = _ar.get_info();
@@ -58,7 +64,7 @@ public class MyFrame extends JFrame{
 		for(int i=0;i<str.size();i++) {
 			g.drawString(str.get(i)+" dt: "+dt,100,60+i*20);
 		}
-		
+
 	}
 	private void drawGraph(Graphics g) {
 		directed_weighted_graph gg = _ar.getGraph();
@@ -79,9 +85,9 @@ public class MyFrame extends JFrame{
 		List<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
-		
+
 		while(itr.hasNext()) {
-			
+
 			CL_Pokemon f = itr.next();
 			Point3D c = f.getLocation();
 			int r=10;
@@ -92,7 +98,7 @@ public class MyFrame extends JFrame{
 				geo_location fp = this._w2f.world2frame(c);
 				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
 			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
-				
+
 			}
 		}
 		}
@@ -112,11 +118,6 @@ public class MyFrame extends JFrame{
 				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
 			}
 		}
-
-			//paint time
-			g.setColor(Color.BLACK);
-			g.setFont(new Font("Arial",Font.BOLD,15));
-			g.drawString("agnt: " + rs.get(0).getValue(),50 ,70 );
 	}
 	private void drawNode(node_data n, int r, Graphics g) {
 		geo_location pos = n.getLocation();
@@ -131,6 +132,16 @@ public class MyFrame extends JFrame{
 		geo_location s0 = this._w2f.world2frame(s);
 		geo_location d0 = this._w2f.world2frame(d);
 		g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
-	//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
+//		g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 	}
-}
+
+	private void drawTimer(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Arial",Font.BOLD,12));
+		g.drawString("Time: "+_ar.getGame().timeToEnd()/1000,40 , 60);
+	}
+
+
+	}
+
+

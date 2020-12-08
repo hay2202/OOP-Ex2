@@ -1,9 +1,6 @@
 package gameClient;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
+import api.*;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
@@ -30,7 +27,7 @@ public class Arena {
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
-
+	private static game_service game;
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -47,6 +44,7 @@ public class Arena {
 		this._agents = f;
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
+
 	private void init( ) {
 		MIN=null; MAX=null;
 		double x0=0,x1=0,y0=0,y1=0;
@@ -62,12 +60,12 @@ public class Arena {
 		double dx = x1-x0, dy = y1-y0;
 		MIN = new Point3D(x0-dx/10,y0-dy/10);
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
-		
+
 	}
 	public List<CL_Agent> getAgents() {return _agents;}
 	public List<CL_Pokemon> getPokemons() {return _pokemons;}
 
-	
+
 	public directed_weighted_graph getGraph() {
 		return _gg;
 	}
@@ -76,6 +74,12 @@ public class Arena {
 	}
 	public void set_info(List<String> _info) {
 		this._info = _info;
+	}
+	public void setGame(game_service g){
+		this.game =g;
+	}
+	public game_service getGame(){
+		return this.game;
 	}
 
 	////////////////////////////////////////////////////
@@ -177,5 +181,8 @@ public class Arena {
 		return ans;
 	}
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
 }
