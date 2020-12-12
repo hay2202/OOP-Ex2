@@ -9,9 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -21,29 +19,32 @@ import java.util.List;
  */
 public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
-	private directed_weighted_graph _gg;
+	private static  directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
-	private List<CL_Pokemon> _pokemons;
+	private Queue<CL_Pokemon> _pokemons;
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 	private static game_service game;
 
-	public Arena() {;
+	public Arena( ) {
 		_info = new ArrayList<String>();
 	}
-	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
-		_gg = g;
-		this.setAgents(r);
-		this.setPokemons(p);
+
+	public Arena(directed_weighted_graph gg , game_service game ) {
+		_gg=gg;
+		this.game=game;
+		this.setPokemons(json2Pokemons(game.getPokemons()));
+		_info = new ArrayList<String>();
 	}
-	public void setPokemons(List<CL_Pokemon> f) {
+
+	public void setPokemons(Queue<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
-	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
+	public void setGraph(directed_weighted_graph g) {this._gg =g;}
 
 	private void init( ) {
 		MIN=null; MAX=null;
@@ -62,10 +63,9 @@ public class Arena {
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
 
 	}
+
 	public List<CL_Agent> getAgents() {return _agents;}
-	public List<CL_Pokemon> getPokemons() {return _pokemons;}
-
-
+	public Queue<CL_Pokemon> getPokemons() {return _pokemons;}
 	public directed_weighted_graph getGraph() {
 		return _gg;
 	}
@@ -81,6 +81,9 @@ public class Arena {
 	public game_service getGame(){
 		return this.game;
 	}
+
+
+
 
 	////////////////////////////////////////////////////
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
@@ -99,8 +102,30 @@ public class Arena {
 		}
 		return ans;
 	}
-	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
-		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
+	//create array of pokemons
+//	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
+//		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
+//		try {
+//			JSONObject ttt = new JSONObject(fs);
+//			JSONArray ags = ttt.getJSONArray("Pokemons");
+//			for(int i=0;i<ags.length();i++) {
+//				JSONObject pp = ags.getJSONObject(i);
+//				JSONObject pk = pp.getJSONObject("Pokemon");
+//				int t = pk.getInt("type");
+//				double v = pk.getDouble("value");
+//				String p = pk.getString("pos");
+//				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, 0, null);
+//				updateEdge(f,_gg);
+//				ans.add(f);
+//			}
+//		}
+//		catch (JSONException e) {e.printStackTrace();}
+//		return ans;
+//	}
+
+	///////***************///////////////
+	public static Queue<CL_Pokemon> json2Pokemons(String fs) {
+		Queue<CL_Pokemon> ans = new PriorityQueue<>(new valueComp());
 		try {
 			JSONObject ttt = new JSONObject(fs);
 			JSONArray ags = ttt.getJSONArray("Pokemons");
@@ -109,17 +134,17 @@ public class Arena {
 				JSONObject pk = pp.getJSONObject("Pokemon");
 				int t = pk.getInt("type");
 				double v = pk.getDouble("value");
-				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, null);
+				updateEdge(f,_gg);
 				ans.add(f);
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		return ans;
 	}
+
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		while(itr.hasNext()) {
 			node_data v = itr.next();
@@ -179,6 +204,21 @@ public class Arena {
 		Range2D world = GraphRange(g);
 		Range2Range ans = new Range2Range(world, frame);
 		return ans;
+	}
+
+	/**
+	 * inner class for using Comparator. this is for manage priority queue
+	 * compare the value of each pokemon.
+	 */
+	private static class valueComp implements Comparator<CL_Pokemon> {
+		@Override
+		public int compare(CL_Pokemon o1, CL_Pokemon o2) {
+			if (o1.getValue()==o2.getValue())
+				return 0;
+			if (o1.getValue() < o2.getValue())
+				return 1;
+			return -1;
+		}
 	}
 
 }
