@@ -151,20 +151,16 @@ public class CL_Agent {
 					 dist = _curr_fruit.getLocation().distance(this._pos);
 				}
 				double norm = dist/de;
-<<<<<<< HEAD
-				double dt = w*norm / this.getSpeed(); 
-=======
+
+				//double dt = w*norm / this.getSpeed();
+
 				double dt = w*norm / this.getSpeed();
->>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
+
 				ddt = (long)(1000.0*dt);
 			}
 			this.set_sg_dt(ddt);
 		}
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}

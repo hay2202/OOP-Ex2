@@ -14,7 +14,9 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         graph = new DWGraph_DS();
         path = new HashMap<>();
     }
-
+    public DWGraph_Algo(directed_weighted_graph g){
+        init(g);
+    }
     /**
      * Init the graph on which this set of algorithms operates on.
      *

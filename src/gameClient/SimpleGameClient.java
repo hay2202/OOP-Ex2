@@ -1,13 +1,12 @@
 package gameClient;
 import Server.Game_Server_Ex2;
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.game_service;
-import api.node_data;
+import api.*;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 
 /**
  * This class represents the simplest "Client-Game" main class
@@ -16,6 +15,8 @@ import java.util.List;
  * use of the "server".
  */
 public class SimpleGameClient {
+	private static dw_graph_algorithms gAlgo;
+	private static HashMap<Integer, List<node_data>> roads;
 	public static void main(String[] a) {
 		test1();
 	}

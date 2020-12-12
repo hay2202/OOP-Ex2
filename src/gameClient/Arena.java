@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
-	private directed_weighted_graph _gg;
+	private static directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private List<CL_Pokemon> _pokemons;
 	private List<String> _info;
@@ -36,6 +36,8 @@ public class Arena {
 		_gg = g;
 		this.setAgents(r);
 		this.setPokemons(p);
+		for(CL_Pokemon i: p)
+			updateEdge(i , g);
 	}
 	public void setPokemons(List<CL_Pokemon> f) {
 		this._pokemons = f;
@@ -111,13 +113,21 @@ public class Arena {
 				double v = pk.getDouble("value");
 				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				String arr[]=p.split(",");
+				double x = Double.parseDouble(arr[0]);
+				double y = Double.parseDouble(arr[1]);
+				double z = Double.parseDouble(arr[2]);
+				Point3D point=new Point3D(x,y,z);
+				CL_Pokemon f = new CL_Pokemon(point, t, v, 0, null);
+				updateEdge(f, _gg);
 				ans.add(f);
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		return ans;
 	}
+
+
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
@@ -181,8 +191,5 @@ public class Arena {
 		return ans;
 	}
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 5f4ad2847fff0b89881f1ca9d2e99022febd9715
 }
