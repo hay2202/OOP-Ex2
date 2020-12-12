@@ -4,7 +4,6 @@ import api.directed_weighted_graph;
 import api.edge_data;
 import api.geo_location;
 import api.node_data;
-import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 
@@ -12,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * This class represents a very simple GUI class to present a
@@ -83,14 +83,14 @@ public class MyFrame extends JFrame {
 		}
 	}
 	private void drawPokemons(Graphics g) {
-		List<CL_Pokemon> fs = _ar.getPokemons();
+		Queue<CL_Pokemon> fs = _ar.getPokemons();
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
 
 		while(itr.hasNext()) {
 
 			CL_Pokemon f = itr.next();
-			Point3D c = f.getLocation();
+			geo_location c = f.getLocation();
 			int r=10;
 			g.setColor(Color.green);
 			if(f.getType()<0) {g.setColor(Color.orange);}

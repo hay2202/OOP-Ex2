@@ -2,9 +2,6 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,8 +15,6 @@ public class Ex2 implements Runnable{
     private static long playerID;
     private static int  num_level;
     private static dw_graph_algorithms gAlgo;
-    private static HashMap<Integer, List<node_data>> roads;
-
 
     public static void main(String[] a){
         login();
@@ -37,7 +32,6 @@ public class Ex2 implements Runnable{
         gAlgo = new DWGraph_Algo();
         gAlgo.load("loadGraph.txt");
         directed_weighted_graph gg =gAlgo.getGraph();
-        roads = new HashMap<Integer, List<node_data>>();
         init(game,gg);
 
         game.startGame();
@@ -71,9 +65,8 @@ public class Ex2 implements Runnable{
         String lg = game.move();
         List<CL_Agent> log = Arena.getAgents(lg, gg);
         _ar.setAgents(log);
-        //ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
         String fs =  game.getPokemons();
-        List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
+        Queue<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
         _ar.setPokemons(ffs);
         for(int i=0;i<log.size();i++) {
             CL_Agent ag = log.get(i);
@@ -82,7 +75,7 @@ public class Ex2 implements Runnable{
             int src = ag.getSrcNode();
             double v = ag.getValue();
             if(dest==-1) {
-                dest = nextNode(gg, src);
+                dest = nextNode(gg, ag);
                 game.chooseNextEdge(ag.getID(), dest);
                 System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
             }
@@ -90,100 +83,56 @@ public class Ex2 implements Runnable{
     }
     /**
      * a very simple random walk implementation!
-     * @param src
+     * @param g
+    * @param ag
      * @return
      */
-    private static int nextNode(directed_weighted_graph g, int src) {
-        int ans = -1;
-        Collection<edge_data> ee = g.getE(src);
-        Iterator<edge_data> itr = ee.iterator();
-        int s = ee.size();
-        int r = (int)(Math.random()*s);
-        int i=0;
-        while(i<r) {itr.next();i++;}
-        ans = itr.next().getDest();
-        return ans;
-    }
-
-    private static   CL_Pokemon shortDistPokemon(CL_Agent ag ) {
-        double myDist= Double.POSITIVE_INFINITY;
-        CL_Pokemon pokemon_closest = null;
-        double dist=0;
-        for (CL_Pokemon i: _ar.getPokemons()){
-           // int x = findEdge(i, _g);
-            dist = gAlgo.shortestPathDist(ag.getSrcNode(), i.get_edge().getDest());
-                if (dist < myDist) {
-                    myDist = dist;
-                    pokemon_closest = i;
+    private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
+        if (ag.getPath()== null || ag.getPath().isEmpty()){
+            if(_ar.getPokemons().size()>0) {
+                CL_Pokemon p = nearestPokemon(ag);
+                List<node_data> newPath = gAlgo.shortestPath(ag.getSrcNode(), p.get_edge().getSrc());
+                node_data des = g.getNode(p.get_edge().getDest());
+                newPath.add(des);
+                newPath.remove(0);
+                ag.setPath(newPath);
             }
         }
-
-        return pokemon_closest;
+        node_data next = ag.getPath().get(0);
+        ag.getPath().remove(0);
+        return next.getKey();
     }
-//    private static  int findEdge(CL_Pokemon pokemon , directed_weighted_graph _gg){
-//        double destPokemon=0;
-//        for (node_data n:_gg.getV()) {
-//            for (edge_data e: _gg.getE(n.getKey())) {
-//                destPokemon = (pokemon.getLocation().distance()) +
-//                        (pokemon.getLocation().get_y() - e.getDest());
-//                if((e.getDest()-e.getSrc())==destPokemon)
-//                    return n.getKey();
-//            }
-//        }
-//
-//        return -1;
-//    }
-    private void initRoads() {
-            double destPokemon = 0;
-            for (int i = 0; i < _ar.getAgents().size(); i++) {
-                CL_Agent r = _ar.getAgents().get(i);
-                CL_Pokemon f = _ar.getPokemons().get(i);
-                List<node_data> road = gAlgo.shortestPath(r.getSrcNode(), f.get_edge().getSrc());
-                roads.put(r.getID(), road);
-            }
-        }
 
-
-
+    // initializes Arena, Frame and place first agents
     private void init(game_service game, directed_weighted_graph gg) {
-        String g = game.getGraph();
-        String fs = game.getPokemons();
-        //gg.init(g);
-        _ar = new Arena();
-        _ar.setGraph(gg);
-        _ar.setPokemons(Arena.json2Pokemons(fs));
-        _ar.setGame(game);
+        _ar = new Arena(gg,game);
         _win = new MyFrame("Ex2 - OOP: Pokemons! ");
         _win.setSize(1000, 700);
         _win.update(_ar);
-
         _win.show();
+
         String info = game.toString();
         JSONObject line;
         try {
             line = new JSONObject(info);
             JSONObject ttt = line.getJSONObject("GameServer");
-            int rs = ttt.getInt("agents");
+            int numOfAgents = ttt.getInt("agents");
             System.out.println(info);
             System.out.println(game.getPokemons());
-            int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-            ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
-            for(int a = 0;a<cl_fs.size();a++) {
-                Arena.updateEdge(cl_fs.get(a),gg);
-
-            }
-            for(int a = 0;a<rs;a++) {
-                int ind = a%cl_fs.size();
-                CL_Pokemon c = cl_fs.get(ind);
-                int nn = c.get_edge().getDest();
-                if(c.getType()<0 ) {nn = c.get_edge().getSrc();}
-                game.addAgent(nn);
+            int src_node ;
+            Queue<CL_Pokemon> listOfPokemons = Arena.json2Pokemons(game.getPokemons());
+            for(int a = 0;a<numOfAgents;a++) {
+                CL_Pokemon c = listOfPokemons.poll();
+                src_node = c.get_edge().getDest();
+                if(c.getType()<0 ) {
+                    src_node = c.get_edge().getSrc();
+                }
+                 game.addAgent(src_node);
             }
         }
         catch (JSONException e) {e.printStackTrace();}
-
-
     }
+
 
     private static void login(){
         MyFrame frame = new MyFrame("log in ");
@@ -206,6 +155,7 @@ public class Ex2 implements Runnable{
         }
     }
 
+
     private static void writeGraph(String s){
         try {
             FileWriter fw = new FileWriter("loadGraph.txt");
@@ -215,6 +165,19 @@ public class Ex2 implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    private static CL_Pokemon nearestPokemon( CL_Agent ag){
+        double minDist = Double.POSITIVE_INFINITY;
+        CL_Pokemon target = null;
+        for (int i=0; i<_ar.getPokemons().size(); i++) {
+            CL_Pokemon p = _ar.getPokemons().poll();
+            double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+            if(d<minDist) {
+                minDist =d;
+                target = p;
+            }
+        }
+        return target;
     }
 }
