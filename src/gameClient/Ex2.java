@@ -25,9 +25,8 @@ public class Ex2 implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-//			game.login(id);
+//			game.login(playerID);
         String g = game.getGraph();
-        String pks = game.getPokemons();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();
         gAlgo.load("loadGraph.txt");
@@ -36,12 +35,12 @@ public class Ex2 implements Runnable{
 
         game.startGame();
         int ind=0;
-        long dt=40;
+        long dt=60;
 
         while(game.isRunning()) {
-            moveAgants(game, gg);
+            moveAgents(game, gg);
             try {
-                if(ind%8==0) {_win.repaint();}
+                if(ind%3==0) {_win.repaint();}
                 Thread.sleep(dt);
                 ind++;
             }
@@ -55,7 +54,6 @@ public class Ex2 implements Runnable{
         System.exit(0);
     }
 
-
     /**
      * Moves each of the agents along the edge,
      * in case the agent is on a node the next destination (next edge) is chosen (randomly).
@@ -63,7 +61,7 @@ public class Ex2 implements Runnable{
      * @param gg
      * @param
      */
-    private static void moveAgants(game_service game, directed_weighted_graph gg) {
+    private static void moveAgents(game_service game, directed_weighted_graph gg) {
         String lg = game.move();
         List<CL_Agent> log = Arena.getAgents(lg, gg);
         _ar.setAgents(log);
@@ -74,7 +72,6 @@ public class Ex2 implements Runnable{
             CL_Agent ag = log.get(i);
             int id = ag.getID();
             int dest = ag.getNextNode();
-            int src = ag.getSrcNode();
             double v = ag.getValue();
             if(dest==-1) {
                 dest = nextNode(gg, ag);
@@ -172,14 +169,14 @@ public class Ex2 implements Runnable{
     private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
-        for (int i=0; i<_ar.getPokemons().size(); i++) {
-            CL_Pokemon p = _ar.getPokemons().poll();
-            double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
-            if(d<minDist) {
-                minDist =d;
-                target = p;
+            for (int i = 0; i < _ar.getPokemons().size(); i++) {
+                CL_Pokemon p = _ar.getPokemons().poll();
+                double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+                if (d < minDist) {
+                    minDist = d;
+                    target = p;
+                }
             }
-        }
         return target;
     }
 }

@@ -83,9 +83,6 @@ public class Arena {
 	}
 
 
-
-
-	////////////////////////////////////////////////////
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
@@ -103,27 +100,6 @@ public class Arena {
 		return ans;
 	}
 	//create array of pokemons
-//	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
-//		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
-//		try {
-//			JSONObject ttt = new JSONObject(fs);
-//			JSONArray ags = ttt.getJSONArray("Pokemons");
-//			for(int i=0;i<ags.length();i++) {
-//				JSONObject pp = ags.getJSONObject(i);
-//				JSONObject pk = pp.getJSONObject("Pokemon");
-//				int t = pk.getInt("type");
-//				double v = pk.getDouble("value");
-//				String p = pk.getString("pos");
-//				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, 0, null);
-//				updateEdge(f,_gg);
-//				ans.add(f);
-//			}
-//		}
-//		catch (JSONException e) {e.printStackTrace();}
-//		return ans;
-//	}
-
-	///////***************///////////////
 	public static Queue<CL_Pokemon> json2Pokemons(String fs) {
 		Queue<CL_Pokemon> ans = new PriorityQueue<>(new valueComp());
 		try {
