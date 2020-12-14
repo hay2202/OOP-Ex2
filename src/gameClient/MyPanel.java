@@ -74,7 +74,7 @@ public class MyPanel extends JPanel{
 
         //draw pokemons
         private void drawPokemons(Graphics g) {
-            java.util.Queue<CL_Pokemon> fs = _ar.getPokemons();
+            java.util.ArrayList<CL_Pokemon> fs = _ar.getPokemons();
             if(fs!=null) {
                 Iterator<CL_Pokemon> itr = fs.iterator();
                 while(itr.hasNext()) {

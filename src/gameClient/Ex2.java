@@ -25,7 +25,7 @@ public class Ex2 implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-//			game.login(playerID);
+			game.login(playerID);
         String g = game.getGraph();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();
@@ -35,7 +35,7 @@ public class Ex2 implements Runnable{
 
         game.startGame();
         int ind=0;
-        long dt=60;
+        long dt=90;
 
         while(game.isRunning()) {
             moveAgents(game, gg);
@@ -47,6 +47,7 @@ public class Ex2 implements Runnable{
             catch(Exception e) {
                 e.printStackTrace();
             }
+
         }
         String res = game.toString();
 
@@ -66,7 +67,7 @@ public class Ex2 implements Runnable{
         List<CL_Agent> log = Arena.getAgents(lg, gg);
         _ar.setAgents(log);
         String fs =  game.getPokemons();
-        Queue<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
+        ArrayList<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
         _ar.setPokemons(ffs);
         for(int i=0;i<log.size();i++) {
             CL_Agent ag = log.get(i);
@@ -80,6 +81,9 @@ public class Ex2 implements Runnable{
             }
         }
     }
+
+
+
     /**
      * a very simple random walk implementation!
      * @param g
@@ -116,23 +120,21 @@ public class Ex2 implements Runnable{
             line = new JSONObject(info);
             JSONObject ttt = line.getJSONObject("GameServer");
             int numOfAgents = ttt.getInt("agents");
-            System.out.println(info);
-            System.out.println(game.getPokemons());
             int src_node ;
-            Queue<CL_Pokemon> listOfPokemons = Arena.json2Pokemons(game.getPokemons());
+            ArrayList<CL_Pokemon> listOfPokemons = Arena.json2Pokemons(game.getPokemons());
             for(int a = 0;a<numOfAgents;a++) {
-                CL_Pokemon c = listOfPokemons.poll();
-                src_node = c.get_edge().getDest();
-                if(c.getType()<0 ) {
+                CL_Pokemon c = listOfPokemons.get(a);
+//                src_node = c.get_edge().getDest();
+//                if(c.getType()<0 ) {
                     src_node = c.get_edge().getSrc();
-                }
+//                }
                  game.addAgent(src_node);
             }
         }
         catch (JSONException e) {e.printStackTrace();}
     }
 
-
+// login to the game
     private static void login(){
         MyFrame frame = new MyFrame("log in ");
         frame.setBounds(200, 0, 500, 500);
@@ -170,7 +172,7 @@ public class Ex2 implements Runnable{
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
             for (int i = 0; i < _ar.getPokemons().size(); i++) {
-                CL_Pokemon p = _ar.getPokemons().poll();
+                CL_Pokemon p = _ar.getPokemons().get(i);
                 double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
                 if (d < minDist) {
                     minDist = d;
