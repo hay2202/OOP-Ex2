@@ -9,15 +9,14 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public class Ex2 implements Runnable {
+public class Ex2 implements Runnable{
     private static MyFrame _win;
     private static Arena _ar;
     private static long playerID;
-    private static int num_level;
+    private static int  num_level;
     private static dw_graph_algorithms gAlgo;
-    private static Hashtable<Integer, List<node_data>> roads;
 
-    public static void main(String[] a) {
+    public static void main(String[] a){
         login();
         Thread client = new Thread(new Ex2());
         client.start();
@@ -25,31 +24,44 @@ public class Ex2 implements Runnable {
 
     @Override
     public void run() {
-        this.roads = new Hashtable<Integer, List<node_data>>();
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
         //game.login(playerID);
         String g = game.getGraph();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();
         gAlgo.load("loadGraph.txt");
-        directed_weighted_graph gg = gAlgo.getGraph();
-        init(game, gg);
-        game.startGame();
-        int ind = 0;
-        long dt = 90;
+        directed_weighted_graph gg =gAlgo.getGraph();
+        init(game,gg);
 
-        while (game.isRunning()) {
+        game.startGame();
+        int ind=0;
+        long dt=85;
+        int mod=2;
+
+        while(game.isRunning()) {
             moveAgents(game, gg);
+            _ar.refresh();
             try {
-                if (ind % 3 == 0) {
-                    _win.repaint();
+                if(ind%mod==0) {
                     game.move();
+                    _win.repaint();
                 }
                 Thread.sleep(dt);
                 ind++;
-            } catch (Exception e) {
+            }
+            catch(Exception e) {
                 e.printStackTrace();
             }
+            int count =0;
+            for (int i=0; i<_ar.getAgents().size();i++){
+                if(_ar.getAgents().get(i).getSpeed()>1)
+                    count++;
+            }
+            if (count==_ar.getAgents().size()){
+                dt=15;
+                mod=8;
+            }
+
 
         }
         String res = game.toString();
@@ -61,61 +73,50 @@ public class Ex2 implements Runnable {
     /**
      * Moves each of the agents along the edge,
      * in case the agent is on a node the next destination (next edge) is chosen (randomly).
-     *
      * @param game
      * @param gg
      * @param
      */
-    private static void moveAgents(game_service game, directed_weighted_graph gg) {
-        String lg = game.getAgents();
-        List<CL_Agent> log = Arena.getAgents(lg, gg);
-        Hashtable<Integer, CL_Agent> aggg = new Hashtable<Integer, CL_Agent>();
-        for (CL_Agent k : log)
-            aggg.put(k.getID(), k);
-        _ar.setAgents(aggg);
-        String fs = game.getPokemons();
-        ArrayList<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-        _ar.setPokemons(ffs);
-        for (int i = 0; i < log.size(); i++) {
-            CL_Agent ag = log.get(i);
-            int id = ag.getID();
-            int dest = ag.getNextNode();
-            double v = ag.getValue();
-            if (dest == -1) {
-                dest = nextNode(gg, ag);
-                game.chooseNextEdge(ag.getID(), dest);
-                System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
+        private static void moveAgents(game_service game, directed_weighted_graph gg) {
+            List<CL_Agent> log = _ar.getAgents();
+            synchronized (_ar.getAgents()) {
+                for (int i = 0; i < log.size(); i++) {
+                    CL_Agent ag = log.get(i);
+                    int id = ag.getID();
+                    int dest = ag.getNextNode();
+                    double v = ag.getValue();
+                    if (dest == -1) {
+                        dest = nextNode(gg, ag);
+                        game.chooseNextEdge(ag.getID(), dest);
+                        System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
+                    }
+                }
             }
-        }
-
     }
+
 
 
     /**
      * a very simple random walk implementation!
-     *
      * @param g
-     * @param ag
+    * @param ag
      * @return
      */
     private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
-        if (ag.getPath() == null || ag.getPath().isEmpty()) {
-            if (_ar.getPokemons().size() > 0) {
+        if (ag.getPath()== null || ag.getPath().isEmpty()){
+            synchronized (_ar.getPokemons()){
+            if(_ar.getPokemons().size()>0) {
                 CL_Pokemon p = nearestPokemon(ag);
                 List<node_data> newPath = gAlgo.shortestPath(ag.getSrcNode(), p.get_edge().getSrc());
                 node_data des = g.getNode(p.get_edge().getDest());
                 newPath.add(des);
                 newPath.remove(0);
                 ag.setPath(newPath);
-            }
+            }}
         }
-        if (!ag.getPath().isEmpty()) {
-            node_data next = ag.getPath().get(0);
-            ag.getPath().remove(0);
-            return next.getKey();
-        }
-
-        return -20;
+        node_data next = ag.getPath().get(0);
+        ag.getPath().remove(0);
+        return next.getKey();
     }
 
     // initializes Arena, Frame and place first agents
@@ -125,41 +126,21 @@ public class Ex2 implements Runnable {
         _win.setSize(1000, 700);
         _win.update(_ar);
         _win.show();
-
-        String info = game.toString();
-        JSONObject line;
-        try {
-            line = new JSONObject(info);
-            JSONObject ttt = line.getJSONObject("GameServer");
-            int numOfAgents = ttt.getInt("agents");
-            int src_node;
-            ArrayList<CL_Pokemon> listOfPokemons = Arena.json2Pokemons(game.getPokemons());
-            for (int a = 0; a < numOfAgents; a++) {
-                CL_Pokemon c = listOfPokemons.get(a);
-//                src_node = c.get_edge().getDest();
-//                if(c.getType()<0 ) {
-                src_node = c.get_edge().getSrc();
-//                }
-                game.addAgent(src_node);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
-    // login to the game
-    private static void login() {
+// login to the game
+    private static void login(){
         MyFrame frame = new MyFrame("log in ");
         frame.setBounds(200, 0, 500, 500);
         try {
 
-            String id = JOptionPane.showInputDialog(frame, "Please insert ID", "Login", 3);
-            String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]", "Level", 3);
+            String id= JOptionPane.showInputDialog(frame, "Please insert ID","Login",3);
+            String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]","Level",3);
 
             playerID = Long.parseLong(id);
             num_level = Integer.parseInt(level);
 
-            if (num_level > 23 || num_level < 0)
+            if (num_level > 23 || num_level < 0 )
                 throw new RuntimeException();
 
         } catch (Exception e) {
@@ -170,7 +151,7 @@ public class Ex2 implements Runnable {
     }
 
 
-    private static void writeGraph(String s) {
+    private static void writeGraph(String s){
         try {
             FileWriter fw = new FileWriter("loadGraph.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -181,23 +162,20 @@ public class Ex2 implements Runnable {
         }
     }
 
-    private static CL_Pokemon nearestPokemon(CL_Agent ag) {
+    private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
-        for (int i = 0; i < _ar.getPokemons().size(); i++) {
-            CL_Pokemon p = _ar.getPokemons().get(i);
-            double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
-            if (d < minDist) {
-                minDist = d;
-                target = p;
+            for (int i = 0; i < _ar.getPokemons().size(); i++) {
+                CL_Pokemon p = _ar.getPokemons().get(i);
+                if (p.getTagged()!=1){
+                    double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+                    if (d < minDist) {
+                        minDist = d;
+                        target = p;
+                    }
+                }
             }
-        }
-
+         target.setTagged(1);
         return target;
     }
 }
-
-
-
-
-

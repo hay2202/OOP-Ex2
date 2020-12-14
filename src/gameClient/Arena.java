@@ -35,6 +35,9 @@ public class Arena {
 		_gg=gg;
 		this.game=game;
 		this.setPokemons(json2Pokemons(game.getPokemons()));
+		setAgentPos();
+		List<CL_Agent> age = getAgents(game.getAgents(),gg);
+		this.setAgents(age);
 		_info = new ArrayList<String>();
 	}
 
@@ -77,14 +80,13 @@ public class Arena {
 				c.update(ags.get(i).toString());
 				ans.add(c);
 			}
-			//= getJSONArray("Agents");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return ans;
 	}
 	//create array of pokemons
-	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
+	public static synchronized ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new ArrayList<>();
 		try {
 			JSONObject ttt = new JSONObject(fs);
@@ -175,6 +177,24 @@ public class Arena {
 			ag.put(k.getID(), k);
 		setPokemons(pok);
 		setAgents(ag);
+	}
+
+	private void setAgentPos(){
+		String info = game.toString();
+		JSONObject line;
+		try {
+			line = new JSONObject(info);
+			JSONObject ttt = line.getJSONObject("GameServer");
+			int numOfAgents = ttt.getInt("agents");
+			int src_node ;
+			ArrayList<CL_Pokemon> listOfPokemons = Arena.json2Pokemons(game.getPokemons());
+			for(int a = 0;a<numOfAgents;a++) {
+				CL_Pokemon c = listOfPokemons.get(a);
+				src_node = c.get_edge().getSrc();
+				game.addAgent(src_node);
+			}
+		}
+		catch (JSONException e) {e.printStackTrace();}
 	}
 
 	/**
