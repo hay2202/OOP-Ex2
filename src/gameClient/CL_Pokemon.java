@@ -10,6 +10,7 @@ public class CL_Pokemon {
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
+	private Boolean tag;
 
 	public CL_Pokemon(Point3D p, int t, double v, edge_data e) {
 		_type = t;
@@ -18,6 +19,7 @@ public class CL_Pokemon {
 		_pos = p;
 		min_dist = -1;
 		min_ro = -1;
+		tag = true;
 	}
 
 	public static CL_Pokemon init_from_json(String json) {
@@ -69,5 +71,13 @@ public class CL_Pokemon {
 
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
+	}
+
+	public void setTag(Boolean tag) {
+		this.tag = tag;
+	}
+
+	public Boolean getTag() {
+		return tag;
 	}
 }
