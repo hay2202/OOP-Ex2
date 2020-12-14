@@ -1,24 +1,20 @@
 package gameClient;
 import api.edge_data;
-import api.geo_location;
 import gameClient.util.Point3D;
-import org.json.JSONObject;
 
 public class CL_Pokemon {
 	private edge_data _edge;
 	private double _value;
 	private int _type;
 	private Point3D _pos;
-	private double min_dist;
-	private int min_ro;
+	private int tagged;
 
 	public CL_Pokemon(Point3D p, int t, double v, edge_data e) {
 		_type = t;
 		_value = v;
 		set_edge(e);
 		_pos = p;
-		min_dist = -1;
-		min_ro = -1;
+		tagged = 0;
 	}
 
 	public String toString() {
@@ -45,19 +41,11 @@ public class CL_Pokemon {
 		return _value;
 	}
 
-	public double getMin_dist() {
-		return min_dist;
+	public int getTagged() {
+		return tagged;
 	}
 
-	public void setMin_dist(double mid_dist) {
-		this.min_dist = mid_dist;
-	}
-
-	public int getMin_ro() {
-		return min_ro;
-	}
-
-	public void setMin_ro(int min_ro) {
-		this.min_ro = min_ro;
+	public void setTagged(int tagged) {
+		this.tagged = tagged;
 	}
 }
