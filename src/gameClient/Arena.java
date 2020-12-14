@@ -22,7 +22,7 @@ import java.util.*;
 public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private static  directed_weighted_graph _gg;
-	private List<CL_Agent> _agents;
+	private Hashtable<Integer,CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
@@ -41,12 +41,12 @@ public class Arena {
 	public void setPokemons(ArrayList<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
-	public void setAgents(List<CL_Agent> f) {
+	public void setAgents(Hashtable<Integer,CL_Agent> f) {
 		this._agents = f;
 	}
 
 
-	public List<CL_Agent> getAgents() {
+	public Hashtable<Integer,CL_Agent> getAgents() {
 		return _agents;
 
 	}
@@ -170,8 +170,11 @@ public class Arena {
 	public  void refresh(){
 		ArrayList<CL_Pokemon> pok = json2Pokemons(game.getPokemons());
 		List<CL_Agent> agents = getAgents(game.getAgents(),getGraph());
+		Hashtable<Integer, CL_Agent> ag = new Hashtable<Integer, CL_Agent>();
+		for (CL_Agent k: agents)
+			ag.put(k.getID(), k);
 		setPokemons(pok);
-		setAgents(agents);
+		setAgents(ag);
 	}
 
 	/**

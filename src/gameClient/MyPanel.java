@@ -9,6 +9,7 @@ import gameClient.util.Range2D;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -93,7 +94,7 @@ public class MyPanel extends JPanel{
 
         //draw agents
         private void drawAgents(Graphics g) {
-            java.util.List<CL_Agent> rs = _ar.getAgents();
+            java.util.Hashtable<Integer,CL_Agent> rs = _ar.getAgents();
             //	Iterator<OOP_Point3D> itr = rs.iterator();
             g.setColor(Color.red);
             int i=0;
@@ -137,12 +138,12 @@ public class MyPanel extends JPanel{
 
         //draw table of scores
         private void drawScore (Graphics g){
-            List<CL_Agent> rs = _ar.getAgents();
+            Hashtable<Integer,CL_Agent> rs = _ar.getAgents();
             g.setColor(Color.BLACK);
             g.setFont(new Font("Arial",Font.BOLD,12));
             int y=60;
             int i=0;
-            for (CL_Agent a : rs){
+            for (CL_Agent a : rs.values()){
                 g.drawString("agent "+ a.getID()+" :	 "+a.getValue(),900 , y+i);
                 i+=20;
             }
