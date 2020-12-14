@@ -22,19 +22,6 @@ public class CL_Pokemon {
 		tag = true;
 	}
 
-	public static CL_Pokemon init_from_json(String json) {
-		CL_Pokemon ans = null;
-		try {
-			JSONObject p = new JSONObject(json);
-			int id = p.getInt("id");
-
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
-		return ans;
-	}
-
 	public String toString() {
 		return "F:{v="+_value+", t="+_type+"}";
 	}
@@ -50,9 +37,11 @@ public class CL_Pokemon {
 	public Point3D getLocation() {
 		return _pos;
 	}
+
 	public int getType() {
 		return _type;
 	}
+
 	public double getValue() {
 		return _value;
 	}

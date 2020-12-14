@@ -23,16 +23,13 @@ public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private static  directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
-	private Queue<CL_Pokemon> _pokemons;
+	private ArrayList<CL_Pokemon> _pokemons;
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 	private static game_service game;
 	private Boolean tag;
 
-	public Arena( ) {
-		_info = new ArrayList<String>();
-	}
 
 	public Arena(directed_weighted_graph gg , game_service game ) {
 		_gg=gg;
@@ -41,46 +38,30 @@ public class Arena {
 		_info = new ArrayList<String>();
 	}
 
-	public void setPokemons(Queue<CL_Pokemon> f) {
+	public void setPokemons(ArrayList<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
-	public void setGraph(directed_weighted_graph g) {this._gg =g;}
 
-	private void init( ) {
-		MIN=null; MAX=null;
-		double x0=0,x1=0,y0=0,y1=0;
-		Iterator<node_data> iter = _gg.getV().iterator();
-		while(iter.hasNext()) {
-			geo_location c = iter.next().getLocation();
-			if(MIN==null) {x0 = c.x(); y0=c.y(); x1=x0;y1=y0;MIN = new Point3D(x0,y0);}
-			if(c.x() < x0) {x0=c.x();}
-			if(c.y() < y0) {y0=c.y();}
-			if(c.x() > x1) {x1=c.x();}
-			if(c.y() > y1) {y1=c.y();}
-		}
-		double dx = x1-x0, dy = y1-y0;
-		MIN = new Point3D(x0-dx/10,y0-dy/10);
-		MAX = new Point3D(x1+dx/10,y1+dy/10);
+
+	public List<CL_Agent> getAgents() {
+		return _agents;
 
 	}
+	public ArrayList<CL_Pokemon> getPokemons() {
+		return _pokemons;
+	}
 
-	public List<CL_Agent> getAgents() {return _agents;}
-	public Queue<CL_Pokemon> getPokemons() {return _pokemons;}
 	public directed_weighted_graph getGraph() {
 		return _gg;
 	}
+
 	public List<String> get_info() {
 		return _info;
 	}
-	public void set_info(List<String> _info) {
-		this._info = _info;
-	}
-	public void setGame(game_service g){
-		this.game =g;
-	}
+
 	public game_service getGame(){
 		return this.game;
 	}
@@ -103,8 +84,8 @@ public class Arena {
 		return ans;
 	}
 	//create array of pokemons
-	public static Queue<CL_Pokemon> json2Pokemons(String fs) {
-		Queue<CL_Pokemon> ans = new PriorityQueue<>(new valueComp());
+	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
+		ArrayList<CL_Pokemon> ans = new ArrayList<>();
 		try {
 			JSONObject ttt = new JSONObject(fs);
 			JSONArray ags = ttt.getJSONArray("Pokemons");
@@ -120,6 +101,7 @@ public class Arena {
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
+		ans.sort(new valueComp());
 		return ans;
 	}
 
@@ -183,6 +165,13 @@ public class Arena {
 		Range2D world = GraphRange(g);
 		Range2Range ans = new Range2Range(world, frame);
 		return ans;
+	}
+
+	public  void refresh(){
+		ArrayList<CL_Pokemon> pok = json2Pokemons(game.getPokemons());
+		List<CL_Agent> agents = getAgents(game.getAgents(),getGraph());
+		setPokemons(pok);
+		setAgents(agents);
 	}
 
 	/**
