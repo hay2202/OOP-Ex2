@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CL_Agent {
-		public static final double EPS = 0.0001;
-		private static int _count = 0;
-		private static int _seed = 3331;
 		private int _id;
 		private geo_location _pos;
 		private double _speed;
@@ -21,7 +18,6 @@ public class CL_Agent {
 		private node_data _curr_node;
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
-		private long _sg_dt;
 		private List<node_data> path;
 		private double _value;
 
@@ -38,7 +34,6 @@ public class CL_Agent {
 		public void update(String json) {
 			JSONObject line;
 			try {
-				// "GameServer":{"graph":"A0","pokemons":3,"agents":1}}
 				line = new JSONObject(json);
 				JSONObject ttt = line.getJSONObject("Agent");
 				int id = ttt.getInt("id");
@@ -89,19 +84,24 @@ public class CL_Agent {
 			else {_curr_edge = null;}
 			return ans;
 		}
+
 		public void setCurrNode(int src) {
 			this._curr_node = _gg.getNode(src);
 		}
+
 		public boolean isMoving() {
 			return this._curr_edge!=null;
 		}
+
 		public String toString() {
 			return toJSON();
 		}
+
 		public String toString1() {
 			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();
 			return ans;
 		}
+
 		public int getID() {
 			return this._id;
 		}
@@ -131,38 +131,17 @@ public class CL_Agent {
 		public void setSpeed(double v) {
 			this._speed = v;
 		}
+
 		public CL_Pokemon get_curr_fruit() {
 			return _curr_fruit;
 		}
+
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
-		}
-		public void set_SDT(long ddtt) {
-			long ddt = ddtt;
-			if(this._curr_edge!=null) {
-				double w = get_curr_edge().getWeight();
-				geo_location dest = _gg.getNode(get_curr_edge().getDest()).getLocation();
-				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
-				double de = src.distance(dest);
-				double dist = _pos.distance(dest);
-				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-					 dist = _curr_fruit.getLocation().distance(this._pos);
-				}
-				double norm = dist/de;
-				double dt = w*norm / this.getSpeed();
-				ddt = (long)(1000.0*dt);
-			}
-			this.set_sg_dt(ddt);
 		}
 
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
-		}
-		public long get_sg_dt() {
-			return _sg_dt;
-		}
-		public void set_sg_dt(long _sg_dt) {
-			this._sg_dt = _sg_dt;
 		}
 
 		public List<node_data> getPath (){

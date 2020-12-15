@@ -59,8 +59,6 @@ public class Ex2 implements Runnable{
                 dt=15;
                 mod=8;
             }
-
-
         }
         String res = game.toString();
 
@@ -70,7 +68,7 @@ public class Ex2 implements Runnable{
 
     /**
      * Moves each of the agents along the edge,
-     * in case the agent is on a node the next destination (next edge) is chosen (randomly).
+     * in case the agent is on a node the next destination (next edge) is chosen by algorithm.
      * @param game
      * @param gg
      * @param
@@ -95,10 +93,10 @@ public class Ex2 implements Runnable{
 
 
     /**
-     * a very simple random walk implementation!
+     * algorithm to choose the next node of each agent
      * @param g
     * @param ag
-     * @return
+     * @return node_id of the next destination.
      */
     private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
         if (ag.getPath()== null || ag.getPath().isEmpty()){
@@ -117,7 +115,7 @@ public class Ex2 implements Runnable{
         return next.getKey();
     }
 
-    // initializes Arena, Frame and place first agents
+    // initializes Arena and Frame.
     private void init(game_service game, directed_weighted_graph gg) {
         _ar = new Arena(gg, game);
         _win = new MyFrame("Ex2 - OOP: Pokemons! ");
@@ -126,7 +124,7 @@ public class Ex2 implements Runnable{
         _win.show();
     }
 
-// login to the game
+    // login to the game. get ID and LEVEL from the user.
     private static void login(){
         MyFrame frame = new MyFrame("log in ");
         frame.setBounds(200, 0, 500, 500);
@@ -148,7 +146,7 @@ public class Ex2 implements Runnable{
         }
     }
 
-
+    //writing the JSON String into a file
     private static void writeGraph(String s){
         try {
             FileWriter fw = new FileWriter("loadGraph.txt");
@@ -160,12 +158,17 @@ public class Ex2 implements Runnable{
         }
     }
 
+    /**
+     * this algorithm find the nearest pokemon with the given agent by using DWGraph_Algo function.
+     * @param ag
+     * @return the nearest pokemon.
+     */
     private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
             for (int i = 0; i < _ar.getPokemons().size(); i++) {
                 CL_Pokemon p = _ar.getPokemons().get(i);
-                if (p.getTagged()!=1){
+                if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
                     double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
                     if (d < minDist) {
                         minDist = d;

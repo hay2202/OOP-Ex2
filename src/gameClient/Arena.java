@@ -22,9 +22,6 @@ public class Arena {
 	private static  directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
-	private List<String> _info;
-	private static Point3D MIN = new Point3D(0, 100,0);
-	private static Point3D MAX = new Point3D(0, 100,0);
 	private static game_service game;
 
 
@@ -35,7 +32,6 @@ public class Arena {
 		setAgentPos();
 		List<CL_Agent> age = getAgents(game.getAgents(),gg);
 		this.setAgents(age);
-		_info = new ArrayList<String>();
 	}
 
 	public void setPokemons(ArrayList<CL_Pokemon> f) {
@@ -56,10 +52,6 @@ public class Arena {
 
 	public directed_weighted_graph getGraph() {
 		return _gg;
-	}
-
-	public List<String> get_info() {
-		return _info;
 	}
 
 	public game_service getGame(){
@@ -192,7 +184,7 @@ public class Arena {
 	}
 
 	/**
-	 * inner class for using Comparator. this is for manage priority queue
+	 * inner class for using Comparator. this is for manage pokemon list
 	 * compare the value of each pokemon.
 	 */
 	private static class valueComp implements Comparator<CL_Pokemon> {
