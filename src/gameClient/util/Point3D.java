@@ -38,14 +38,6 @@ public class Point3D implements geo_location, Serializable{
             throw(e);
         }
     }
-
-    public double get_y(){
-        return this._y;
-    }
-
-    public double get_x(){
-        return this._x;
-    }
     @Override
     public double x() {return _x;}
     @Override

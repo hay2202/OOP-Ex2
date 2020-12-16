@@ -95,7 +95,7 @@ public class Ex2 implements Runnable{
     /**
      * algorithm to choose the next node of each agent
      * @param g
-     * @param ag
+    * @param ag
      * @return node_id of the next destination.
      */
     private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
@@ -166,17 +166,17 @@ public class Ex2 implements Runnable{
     private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
-        for (int i = 0; i < _ar.getPokemons().size(); i++) {
-            CL_Pokemon p = _ar.getPokemons().get(i);
-            if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
-                double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
-                if (d < minDist) {
-                    minDist = d;
-                    target = p;
+            for (int i = 0; i < _ar.getPokemons().size(); i++) {
+                CL_Pokemon p = _ar.getPokemons().get(i);
+                if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
+                    double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+                    if (d < minDist) {
+                        minDist = d;
+                        target = p;
+                    }
                 }
             }
-        }
-        target.setTagged(1);
+         target.setTagged(1);
         return target;
     }
 }

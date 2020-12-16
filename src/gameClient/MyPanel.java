@@ -42,17 +42,8 @@ public class MyPanel extends JPanel{
             drawPokemons(g);
             drawGraph(g);
             drawAgents(g);
-            drawInfo(g);
             drawTimer(g);
             drawScore(g);
-
-        }
-        private void drawInfo(Graphics g) {
-            java.util.List<String> str = _ar.get_info();
-            String dt = "none";
-            for(int i=0;i<str.size();i++) {
-                g.drawString(str.get(i)+" dt: "+dt,100,60+i*20);
-            }
 
         }
 
