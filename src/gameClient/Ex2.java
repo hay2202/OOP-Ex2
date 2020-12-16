@@ -2,8 +2,6 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.*;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.swing.*;
 import java.io.*;
@@ -25,7 +23,7 @@ public class Ex2 implements Runnable{
     @Override
     public void run() {
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-        //game.login(playerID);
+        game.login(playerID);
         String g = game.getGraph();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();
@@ -61,8 +59,6 @@ public class Ex2 implements Runnable{
                 dt=15;
                 mod=8;
             }
-
-
         }
         String res = game.toString();
 
@@ -72,54 +68,54 @@ public class Ex2 implements Runnable{
 
     /**
      * Moves each of the agents along the edge,
-     * in case the agent is on a node the next destination (next edge) is chosen (randomly).
+     * in case the agent is on a node the next destination (next edge) is chosen by algorithm.
      * @param game
      * @param gg
      * @param
      */
-        private static void moveAgents(game_service game, directed_weighted_graph gg) {
-            List<CL_Agent> log = _ar.getAgents();
-            synchronized (_ar.getAgents()) {
-                for (int i = 0; i < log.size(); i++) {
-                    CL_Agent ag = log.get(i);
-                    int id = ag.getID();
-                    int dest = ag.getNextNode();
-                    double v = ag.getValue();
-                    if (dest == -1) {
-                        dest = nextNode(gg, ag);
-                        game.chooseNextEdge(ag.getID(), dest);
-                        System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
-                    }
+    private static void moveAgents(game_service game, directed_weighted_graph gg) {
+        List<CL_Agent> log = _ar.getAgents();
+        synchronized (_ar.getAgents()) {
+            for (int i = 0; i < log.size(); i++) {
+                CL_Agent ag = log.get(i);
+                int id = ag.getID();
+                int dest = ag.getNextNode();
+                double v = ag.getValue();
+                if (dest == -1) {
+                    dest = nextNode(gg, ag);
+                    game.chooseNextEdge(ag.getID(), dest);
+                    System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
                 }
             }
+        }
     }
 
 
 
     /**
-     * a very simple random walk implementation!
+     * algorithm to choose the next node of each agent
      * @param g
-    * @param ag
-     * @return
+     * @param ag
+     * @return node_id of the next destination.
      */
     private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
         if (ag.getPath()== null || ag.getPath().isEmpty()){
             synchronized (_ar.getPokemons()){
-            if(_ar.getPokemons().size()>0) {
-                CL_Pokemon p = nearestPokemon(ag);
-                List<node_data> newPath = gAlgo.shortestPath(ag.getSrcNode(), p.get_edge().getSrc());
-                node_data des = g.getNode(p.get_edge().getDest());
-                newPath.add(des);
-                newPath.remove(0);
-                ag.setPath(newPath);
-            }}
+                if(_ar.getPokemons().size()>0) {
+                    CL_Pokemon p = nearestPokemon(ag);
+                    List<node_data> newPath = gAlgo.shortestPath(ag.getSrcNode(), p.get_edge().getSrc());
+                    node_data des = g.getNode(p.get_edge().getDest());
+                    newPath.add(des);
+                    newPath.remove(0);
+                    ag.setPath(newPath);
+                }}
         }
         node_data next = ag.getPath().get(0);
         ag.getPath().remove(0);
         return next.getKey();
     }
 
-    // initializes Arena, Frame and place first agents
+    // initializes Arena and Frame.
     private void init(game_service game, directed_weighted_graph gg) {
         _ar = new Arena(gg, game);
         _win = new MyFrame("Ex2 - OOP: Pokemons! ");
@@ -128,7 +124,7 @@ public class Ex2 implements Runnable{
         _win.show();
     }
 
-// login to the game
+    // login to the game. get ID and LEVEL from the user.
     private static void login(){
         MyFrame frame = new MyFrame("log in ");
         frame.setBounds(200, 0, 500, 500);
@@ -150,7 +146,7 @@ public class Ex2 implements Runnable{
         }
     }
 
-
+    //writing the JSON String into a file
     private static void writeGraph(String s){
         try {
             FileWriter fw = new FileWriter("loadGraph.txt");
@@ -162,20 +158,25 @@ public class Ex2 implements Runnable{
         }
     }
 
+    /**
+     * this algorithm find the nearest pokemon with the given agent by using DWGraph_Algo function.
+     * @param ag
+     * @return the nearest pokemon.
+     */
     private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
-            for (int i = 0; i < _ar.getPokemons().size(); i++) {
-                CL_Pokemon p = _ar.getPokemons().get(i);
-                if (p.getTagged()!=1){
-                    double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
-                    if (d < minDist) {
-                        minDist = d;
-                        target = p;
-                    }
+        for (int i = 0; i < _ar.getPokemons().size(); i++) {
+            CL_Pokemon p = _ar.getPokemons().get(i);
+            if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
+                double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+                if (d < minDist) {
+                    minDist = d;
+                    target = p;
                 }
             }
-         target.setTagged(1);
+        }
+        target.setTagged(1);
         return target;
     }
 }

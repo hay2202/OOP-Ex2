@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 import java.util.*;
 
 
@@ -22,13 +20,9 @@ import java.util.*;
 public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private static  directed_weighted_graph _gg;
-	private Hashtable<Integer,CL_Agent> _agents;
+	private List<CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
-	private List<String> _info;
-	private static Point3D MIN = new Point3D(0, 100,0);
-	private static Point3D MAX = new Point3D(0, 100,0);
 	private static game_service game;
-	private Boolean tag;
 
 
 	public Arena(directed_weighted_graph gg , game_service game ) {
@@ -38,18 +32,17 @@ public class Arena {
 		setAgentPos();
 		List<CL_Agent> age = getAgents(game.getAgents(),gg);
 		this.setAgents(age);
-		_info = new ArrayList<String>();
 	}
 
 	public void setPokemons(ArrayList<CL_Pokemon> f) {
 		this._pokemons = f;
 	}
-	public void setAgents(Hashtable<Integer,CL_Agent> f) {
+	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
 
 
-	public Hashtable<Integer,CL_Agent> getAgents() {
+	public List<CL_Agent> getAgents() {
 		return _agents;
 
 	}
@@ -59,10 +52,6 @@ public class Arena {
 
 	public directed_weighted_graph getGraph() {
 		return _gg;
-	}
-
-	public List<String> get_info() {
-		return _info;
 	}
 
 	public game_service getGame(){
@@ -172,11 +161,8 @@ public class Arena {
 	public  void refresh(){
 		ArrayList<CL_Pokemon> pok = json2Pokemons(game.getPokemons());
 		List<CL_Agent> agents = getAgents(game.getAgents(),getGraph());
-		Hashtable<Integer, CL_Agent> ag = new Hashtable<Integer, CL_Agent>();
-		for (CL_Agent k: agents)
-			ag.put(k.getID(), k);
 		setPokemons(pok);
-		setAgents(ag);
+		setAgents(agents);
 	}
 
 	private void setAgentPos(){
@@ -198,7 +184,7 @@ public class Arena {
 	}
 
 	/**
-	 * inner class for using Comparator. this is for manage priority queue
+	 * inner class for using Comparator. this is for manage pokemon list
 	 * compare the value of each pokemon.
 	 */
 	private static class valueComp implements Comparator<CL_Pokemon> {
@@ -211,9 +197,5 @@ public class Arena {
 			return -1;
 		}
 	}
-
-public boolean isP(CL_Pokemon p){
-	return isOnEdge(p.getLocation(), p.get_edge(), p.getType(), _gg);
-}
 
 }
