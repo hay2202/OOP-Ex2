@@ -13,15 +13,28 @@ public class Ex2 implements Runnable{
     private static long playerID;
     private static int  num_level;
     private static dw_graph_algorithms gAlgo;
+    private static LinkedList<Integer>[] passed;
 
     public static void main(String[] a){
-        login();
+        num_level = -1;
+        playerID = -1;
+        if(a !=null ){
+            int l = a.length;
+            if(l>0)
+                playerID = Integer.parseInt(a[0]);
+            if(l>1)
+                num_level = Integer.parseInt(a[1]);
+        }
         Thread client = new Thread(new Ex2());
         client.start();
+
+
     }
 
     @Override
     public void run() {
+        if(num_level == -1 && playerID == -1)
+            login();
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
         game.login(playerID);
         String g = game.getGraph();
@@ -40,6 +53,12 @@ public class Ex2 implements Runnable{
             moveAgents(game, gg);
             _ar.refresh();
             try {
+                for (CL_Agent ag : _ar.getAgents()){
+                    if (isStuck(ag.getID())){
+                        dt=10;
+                        mod=2;
+                    }
+                }
                 if(ind%mod==0) {
                     game.move();
                     _win.repaint();
@@ -58,6 +77,11 @@ public class Ex2 implements Runnable{
             if (count==_ar.getAgents().size()){
                 dt=15;
                 mod=8;
+            }
+            else
+            {
+                dt=85;
+                mod=2;
             }
         }
         String res = game.toString();
@@ -90,8 +114,6 @@ public class Ex2 implements Runnable{
             }
     }
 
-
-
     /**
      * algorithm to choose the next node of each agent
      * @param g
@@ -112,16 +134,20 @@ public class Ex2 implements Runnable{
         }
         node_data next = ag.getPath().get(0);
         ag.getPath().remove(0);
+        passed[ag.getID()].add(next.getKey());
         return next.getKey();
     }
 
     // initializes Arena and Frame.
     private void init(game_service game, directed_weighted_graph gg) {
         _ar = new Arena(gg, game);
-        _win = new MyFrame("Ex2 - OOP: Pokemons! ");
+        _win = new MyFrame("Ex2 - OOP: Pokemons! Level: "+num_level);
         _win.setSize(1000, 700);
         _win.update(_ar);
         _win.show();
+        passed = new LinkedList[_ar.getAgents().size()];
+        for (int i = 0; i< passed.length; i++)
+            passed[i]= new LinkedList<>();
     }
 
     // login to the game. get ID and LEVEL from the user.
@@ -178,5 +204,17 @@ public class Ex2 implements Runnable{
             }
          target.setTagged(1);
         return target;
+    }
+
+    //this function check if there is agent stuck on edge if so changing dt
+    public boolean isStuck( int key){
+        if( passed[key].size()==6){
+            LinkedList<Integer> temp = passed[key];
+            if (temp.get(0)==temp.get(2)&& temp.get(0)==temp.get(4) && temp.get(1)==temp.get(3)&& temp.get(1)==temp.get(5)){
+                return true;
+            }
+            passed[key]= new LinkedList<>();
+        }
+        return false;
     }
 }

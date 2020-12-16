@@ -21,7 +21,6 @@ public class CL_Agent {
 		private List<node_data> path;
 		private double _value;
 
-
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
 			setMoney(0);
@@ -143,7 +142,6 @@ public class CL_Agent {
 		public edge_data get_curr_edge() {
 			return this._curr_edge;
 		}
-
 		public List<node_data> getPath (){
 			return this.path;
 		}
