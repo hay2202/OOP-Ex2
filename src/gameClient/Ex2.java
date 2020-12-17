@@ -15,15 +15,28 @@ public class Ex2 implements Runnable{
     private static dw_graph_algorithms gAlgo;
 
     public static void main(String[] a){
-        login();
+        num_level = -1;
+        playerID = -1;
+        if(a !=null ){
+            int l = a.length;
+            if(l>0)
+                playerID = Long.parseLong(a[0]);
+            if(l>1)
+                num_level = Integer.parseInt(a[1]);
+        }
+       // login();
         Thread client = new Thread(new Ex2());
         client.start();
+
+
     }
 
     @Override
     public void run() {
+        if(num_level == -1 && playerID == -1)
+        login();
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-        game.login(playerID);
+      //  game.login(playerID);
         String g = game.getGraph();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();
@@ -95,7 +108,7 @@ public class Ex2 implements Runnable{
     /**
      * algorithm to choose the next node of each agent
      * @param g
-    * @param ag
+     * @param ag
      * @return node_id of the next destination.
      */
     private static int nextNode(directed_weighted_graph g, CL_Agent ag) {
@@ -125,26 +138,27 @@ public class Ex2 implements Runnable{
     }
 
     // login to the game. get ID and LEVEL from the user.
-    private static void login(){
-        MyFrame frame = new MyFrame("log in ");
-        frame.setBounds(200, 0, 500, 500);
-        try {
+    private static void login() {
+            MyFrame frame = new MyFrame("log in ");
+            frame.setBounds(200, 0, 500, 500);
+            try {
 
-            String id= JOptionPane.showInputDialog(frame, "Please insert ID","Login",3);
-            String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]","Level",3);
+                String id = JOptionPane.showInputDialog(frame, "Please insert ID", "Login", 3);
+                String level = JOptionPane.showInputDialog(frame, "Please insert level number [0-23]", "Level", 3);
 
-            playerID = Long.parseLong(id);
-            num_level = Integer.parseInt(level);
+                playerID = Long.parseLong(id);
+                num_level = Integer.parseInt(level);
 
-            if (num_level > 23 || num_level < 0 )
-                throw new RuntimeException();
+                if (num_level > 23 || num_level < 0)
+                    throw new RuntimeException();
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Invalid input.\nPlaying default game", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            num_level = 0;
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, "Invalid input.\nPlaying default game", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                num_level = 0;
+            }
         }
-    }
+
 
     //writing the JSON String into a file
     private static void writeGraph(String s){
@@ -166,17 +180,17 @@ public class Ex2 implements Runnable{
     private static CL_Pokemon nearestPokemon( CL_Agent ag){
         double minDist = Double.POSITIVE_INFINITY;
         CL_Pokemon target = null;
-            for (int i = 0; i < _ar.getPokemons().size(); i++) {
-                CL_Pokemon p = _ar.getPokemons().get(i);
-                if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
-                    double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
-                    if (d < minDist) {
-                        minDist = d;
-                        target = p;
-                    }
+        for (int i = 0; i < _ar.getPokemons().size(); i++) {
+            CL_Pokemon p = _ar.getPokemons().get(i);
+            if (p.getTagged()!=1 || _ar.getGraph().getE(p.get_edge().getDest()) != null){
+                double d = gAlgo.shortestPathDist(ag.getSrcNode(), p.get_edge().getDest());
+                if (d < minDist) {
+                    minDist = d;
+                    target = p;
                 }
             }
-         target.setTagged(1);
+        }
+        target.setTagged(1);
         return target;
     }
 }
