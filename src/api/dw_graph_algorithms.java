@@ -15,11 +15,20 @@ import java.util.List;
  *
  */
 public interface dw_graph_algorithms {
+
+    //Need to check whether to add to the interface or not
+
+    public List connected_component(int key);
+
+    public List<List<Integer>> connected_components();
+
+
     /**
      * Init the graph on which this set of algorithms operates on.
      * @param g
      */
     public void init(directed_weighted_graph g);
+
 
     /**
      * Return the underlying graph of which this class works.

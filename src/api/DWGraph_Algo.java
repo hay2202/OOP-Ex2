@@ -14,9 +14,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         graph = new DWGraph_DS();
         path = new HashMap<>();
     }
-    public DWGraph_Algo(directed_weighted_graph g){
+
+    public DWGraph_Algo(directed_weighted_graph g) {
         init(g);
     }
+
     /**
      * Init the graph on which this set of algorithms operates on.
      *
@@ -194,8 +196,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             FileReader fr = new FileReader(file);
             directed_weighted_graph loadedGraph = gson.fromJson(fr, DWGraph_DS.class);
             this.init(loadedGraph);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
@@ -224,6 +225,70 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
         for (edge_data next : g.getE(key))
             dfs(next.getDest(), g);
+    }
+
+
+    public List dfs_component(int key, directed_weighted_graph g) {
+        int n = 0;
+        List<Integer> lst = new ArrayList<Integer>();
+        Queue<Integer> stack = new PriorityQueue<Integer>();
+        node_data temp = g.getNode(key);
+        stack.add(temp.getKey());
+        temp.setInfo("p");
+        while (!stack.isEmpty()) {
+            n = stack.poll();
+            for (edge_data i : g.getE(n)) {
+                if (g.getNode(i.getDest()).getInfo() != "p") {
+                    stack.add(i.getDest());
+                    g.getNode(i.getDest()).setInfo("p");
+                    lst.add(i.getDest());
+                }
+            }
+        }
+        resetTI(g);
+        return lst;
+    }
+
+    public List connected_component(int key) {
+        List<Integer> lst1 = new ArrayList<Integer>();
+        List<Integer> lst2 = new ArrayList<Integer>();
+
+        lst1 = dfs_component(key, this.graph);
+        if (lst1.isEmpty()) {
+            return lst1;
+        }
+        directed_weighted_graph trs_graph = transpose(this.graph);
+        lst2 = dfs_component(key, trs_graph);
+        if (lst2.isEmpty()) {
+            return lst2;
+        }
+        return cut(lst1, lst2);
+    }
+
+    public List<List<Integer>> connected_components() { // maybe bug  ?
+        List<List<Integer>> ls = new ArrayList<>();
+        List<Integer> x = new ArrayList<>();
+        for (node_data v : graph.getV()) {
+            x = connected_component(v.getKey());
+            ls.add(x);
+        }
+        return ls;
+    }
+
+    public List cut(List<Integer> x, List<Integer> y) { // o(x*y)  all element x * all element y
+        List<Integer> lst = new ArrayList<Integer>();
+        for (int i : x) {
+            if (!lst.contains(i)) { // maybe no need ?
+                for (int k : y) {
+                    if (i == k) {
+                        //  lst.remove(k) to less o()
+                        lst.add(i);
+                        break;
+                    }
+                }
+            }
+        }
+        return lst;
     }
 
     /**

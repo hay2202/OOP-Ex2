@@ -43,32 +43,59 @@ class DWGraph_AlgoTest {
     /**
      * graph creator of 10 nodes 15 edges.
      */
-    @BeforeEach
-        void Build() {
+//    @BeforeEach
+//        void Build() {
+//        g =new DWGraph_DS();
+//        for (int i=0;i<10;i++){
+//            node_data n = new Node(i);
+//            g.addNode(n);
+//        }
+//        g.connect(0,1,1);
+//        g.connect(0,8,2);
+//        g.connect(9,0,1);
+//        g.connect(1,5,25);
+//        g.connect(1,4,3);
+//        g.connect(4,3,1);
+//        g.connect(2,4,1.5);
+//        g.connect(3,2,0.5);
+//        g.connect(7,6,1);
+//        g.connect(6,7,1);
+//        g.connect(5,7,4);
+//        g.connect(8,5,3);
+//        g.connect(2,1,5);
+//        g.connect(7,8,2.5);
+//        g.connect(5,9,1.5);
+//        g2=new DWGraph_Algo();
+//        g2.init(g);
+//    }
+
+    @BeforeEach // for compo
+    void Build() {
         g =new DWGraph_DS();
-        for (int i=0;i<10;i++){
+        for (int i=0;i<5;i++){
             node_data n = new Node(i);
             g.addNode(n);
         }
-        g.connect(0,1,1);
-        g.connect(0,8,2);
-        g.connect(9,0,1);
-        g.connect(1,5,25);
-        g.connect(1,4,3);
+        g.connect(0,2,1);
+        g.connect(2,3,1);
+        g.connect(3,4,1);
         g.connect(4,3,1);
-        g.connect(2,4,1.5);
-        g.connect(3,2,0.5);
-        g.connect(7,6,1);
-        g.connect(6,7,1);
-        g.connect(5,7,4);
-        g.connect(8,5,3);
-        g.connect(2,1,5);
-        g.connect(7,8,2.5);
-        g.connect(5,9,1.5);
+        g.connect(4,0,1);
+        g.connect(1,2,1);
         g2=new DWGraph_Algo();
         g2.init(g);
     }
 
+    @Test
+    void copmpo() {
+        List<Integer> x = g2.connected_component(0);
+        for (int i:x
+             ) {
+            System.out.printf(i+",");
+        }
+        List<List<Integer>> y = g2.connected_components();
+        System.out.println();
+    }
 
     /**
      *  check copy of a graph
