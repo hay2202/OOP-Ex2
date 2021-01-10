@@ -36,7 +36,7 @@ public class Ex2 implements Runnable{
         if(num_level == -1 && playerID == -1)
             login();
         game_service game = Game_Server_Ex2.getServer(num_level); // you have [0,23] games
-        game.login(playerID);
+       // game.login(playerID);
         String g = game.getGraph();
         writeGraph(g);
         gAlgo = new DWGraph_Algo();

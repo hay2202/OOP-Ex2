@@ -1,4 +1,6 @@
+import Server.Game_Server_Ex2;
 import api.*;
+import gameClient.Ex2;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +71,7 @@ class DWGraph_AlgoTest {
 //        g2.init(g);
 //    }
 
-    @BeforeEach // for compo
+  //  @BeforeEach // for compo
     void Build() {
         g =new DWGraph_DS();
         for (int i=0;i<5;i++){
@@ -211,13 +213,18 @@ class DWGraph_AlgoTest {
      */
     @Test
     void saveLoad() {
-        assertTrue(g2.save("graph_test.json"));
-        assertTrue(g2.load("graph_test.json"));
-        directed_weighted_graph loadGraph =g2.getGraph();
-        assertEquals(g,loadGraph);
-        int rnd = (int) (Math.random()*10);
-        g.removeNode(rnd);
-        assertNotEquals(g,loadGraph);
+        g2 = new DWGraph_Algo();
+        g2.load("/Users/danielsela/IdeaProjects/OOP-Ex2/Graphs_no_pos/G_1000_8000_0.json");
+//        List<Integer> lst=g2.connected_component(1);
+//        System.out.println(lst.toString());
+//        System.out.println(g2.getGraph());
+//        assertTrue(g2.save("graph_test.json"));
+//        assertTrue(g2.load("graph_test.json"));
+//        directed_weighted_graph loadGraph =g2.getGraph();
+//        assertEquals(g,loadGraph);
+//        int rnd = (int) (Math.random()*10);
+//        g.removeNode(rnd);
+        //assertNotEquals(g,loadGraph);
     }
 
 
