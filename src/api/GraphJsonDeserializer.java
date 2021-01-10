@@ -46,12 +46,12 @@ public class GraphJsonDeserializer implements JsonDeserializer<directed_weighted
                 JsonElement jsonValueElement = nodeJsonObject.get(i);
                 int key = jsonValueElement.getAsJsonObject().get("id").getAsInt();
                 node_data n = new Node(key);
-                String[]location = jsonValueElement.getAsJsonObject().get("pos").getAsString().split(",");
-                double x = Double.parseDouble(location[0]);
-                double y = Double.parseDouble(location[1]);
-                double z = Double.parseDouble(location[2]);
-                geo_location pos = new GeoLocation(x,y,z);
-                n.setLocation(pos);
+//                String[]location = jsonValueElement.getAsJsonObject().get("pos").getAsString().split(",");
+//                double x = Double.parseDouble(location[0]);
+//                double y = Double.parseDouble(location[1]);
+//                double z = Double.parseDouble(location[2]);
+//                geo_location pos = new GeoLocation(x,y,z);
+//                n.setLocation(pos);
                 graph.addNode(n);
             }
 

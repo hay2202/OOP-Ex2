@@ -250,19 +250,22 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
 
     public List connected_component(int key) {
-        List<Integer> lst1 = new ArrayList<Integer>();
-        List<Integer> lst2 = new ArrayList<Integer>();
+        if (graph.getNode(key) != null) {
+            List<Integer> lst1 = new ArrayList<Integer>();
+            List<Integer> lst2 = new ArrayList<Integer>();
 
-        lst1 = dfs_component(key, this.graph);
-        if (lst1.isEmpty()) {
-            return lst1;
+            lst1 = dfs_component(key, this.graph);
+            if (lst1.isEmpty()) {
+                return lst1;
+            }
+            directed_weighted_graph trs_graph = transpose(this.graph);
+            lst2 = dfs_component(key, trs_graph);
+            if (lst2.isEmpty()) {
+                return lst2;
+            }
+            return cut(lst1, lst2);
         }
-        directed_weighted_graph trs_graph = transpose(this.graph);
-        lst2 = dfs_component(key, trs_graph);
-        if (lst2.isEmpty()) {
-            return lst2;
-        }
-        return cut(lst1, lst2);
+        return null;
     }
 
     public List<List<Integer>> connected_components() { // maybe bug  ?
@@ -270,7 +273,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         List<Integer> x = new ArrayList<>();
         for (node_data v : graph.getV()) {
             x = connected_component(v.getKey());
-            ls.add(x);
+            if (!ls.contains(x))
+                 ls.add(x);
         }
         return ls;
     }
